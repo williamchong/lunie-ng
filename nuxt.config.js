@@ -11,7 +11,7 @@ export default {
 
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    title: 'Lunie 3',
+    title: 'LikeCoin - Lunie 3',
     htmlAttrs: {
       lang: 'en',
     },
@@ -25,7 +25,7 @@ export default {
           'Lunie 3 is a simple staking and governance interface for proof-of-stake blockchains',
       },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    link: [{ rel: 'icon', type: 'image/png', href: '/favicon.png' }],
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
