@@ -1,39 +1,43 @@
 export default {
-  id: 'cosmos-hub-mainnet',
-  name: 'Cosmos Mainnet',
+  id: 'likecoin-chain-sheungwan',
+  name: 'LikeCoin chain',
   description:
-    'Cosmos is a network of independent parallel blockchains, powered by BFT consensus algorithms like Tendermint.',
+    'LikeCoin is a decentralized publishing infrastructure. It provides a comprehensive metadata framework to facilitate content registration, licensing, and monetization for all media types.',
   logo: `logo.svg`,
-  website: 'https://cosmos.network',
-  // apiURL: 'http://localhost:8010/proxy',
-  apiURL: 'https://api.cosmos.network',
-  rpcURL: 'https://rpc.cosmos.network',
-  minBlockHeight: 5200792, // actually 5200791, but it has the wrong block time.
-  stakingDenom: 'ATOM',
+  website: 'https://like.co',
+  apiURL: 'https://mainnet-node.like.co', // use `npx lcp --proxyUrl http://34.123.30.100:1317`
+  rpcURL: 'ws://mainnet-node.like.co:26657',
+  stakingWalletURL: 'https://stake.like.co',
+  minBlockHeight: 1,
+  stakingDenom: 'LIKE',
   coinLookup: [
     {
-      viewDenom: 'ATOM',
-      chainDenom: 'uatom',
-      chainToViewConversionFactor: 1e-6,
-      icon: `currencies/atom.png`,
+      viewDenom: 'LIKE',
+      chainDenom: 'nanolike',
+      chainToViewConversionFactor: '0.000000001',
+      icon: `currencies/like.png`,
+      coinGeckoId: 'likecoin',
     },
   ],
   addressPrefix: 'cosmos',
   validatorAddressPrefix: 'cosmosvaloper',
   validatorConsensusaddressPrefix: 'cosmosvalcons', // needed to map validators from staking queries to the validator set
   HDPath: `m/44'/118'/0'/0/0`,
-  lockUpPeriod: `3 days`,
+  lockUpPeriod: `21 days`,
   fees: {
     default: {
       gasEstimate: 350000,
       feeOptions: [
         {
-          denom: 'ATOM',
-          amount: 0.001,
+          denom: 'LIKE',
+          amount: 0.035,
         },
       ],
     },
   },
-  icon: `https://lunie.fra1.digitaloceanspaces.com/network-icons/cosmos.png`,
-  localSigning: true, // this is only to be used as a developer tool - never deployed in production or for mainnet chains
+  icon: `https://like.co/logo.png`,
+
+  // This is only to be used as a developer tool and for testing purposes
+  // NEVER ENABLE LOCALSIGNING IN PRODUCTION OR FOR MAINNETS
+  localSigning: false,
 }
