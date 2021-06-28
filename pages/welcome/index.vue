@@ -20,6 +20,12 @@
         route="/keplr"
       />
       <AddressLiSession icon="usb" title="Ledger Nano" route="/ledger" />
+      <AddressLiSession
+        v-if="network.authcoreURL"
+        icon="https"
+        title="Authcore"
+        route="/authcore"
+      />
       <template v-if="network.localSigning">
         <AddressLiSession
           icon="person"

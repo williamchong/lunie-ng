@@ -418,6 +418,9 @@ export default {
           'data/getAccountInfo',
           this.session.address
         )
+        const authcoreCosmosProvider = await this.$store.dispatch(
+          'authcore/getSigner'
+        )
 
         const hashResult = await createSignBroadcast({
           messageType: type,
@@ -432,6 +435,7 @@ export default {
           feeDenom: this.feeDenom,
           chainId: block.chainId,
           ledgerTransport: this.transport,
+          authcoreCosmosProvider,
         })
 
         const { hash } = hashResult
