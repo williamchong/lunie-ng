@@ -259,6 +259,8 @@ export function getMessageType(type) {
   switch (transactionTypeSuffix) {
     case 'cosmos.bank.v1beta1.MsgSend':
       return lunieMessageTypes.SEND
+    case 'cosmos.bank.v1beta1.MsgMultiSend':
+      return lunieMessageTypes.SEND_MULTIPLE
     case 'cosmos.staking.v1beta1.MsgDelegate':
       return lunieMessageTypes.STAKE
     case 'cosmos.staking.v1beta1.MsgBeginRedelegate':
@@ -273,6 +275,12 @@ export function getMessageType(type) {
       return lunieMessageTypes.VOTE
     case 'cosmos.gov.v1beta1.MsgDeposit':
       return lunieMessageTypes.DEPOSIT
+    case 'likechain.iscn.MsgCreateIscnRecord':
+      return lunieMessageTypes.CREATE_ISCN_RECORD
+    case 'likechain.iscn.MsgUpdateIscnRecord':
+      return lunieMessageTypes.UPDATE_ISCN_RECORD
+    case 'likechain.iscn.MsgChangeIscnRecordOwnership':
+      return lunieMessageTypes.CHANGE_ISCN_OWNERSHIP
     default:
       return lunieMessageTypes.UNKNOWN
   }
@@ -291,6 +299,16 @@ export function sendDetailsReducer(message) {
     from: [message.from_address],
     to: [message.to_address],
     amounts: message.amount.map(coinReducer),
+  }
+}
+
+export function sendMultipleDetailsReducer(message) {
+  return {
+    from: [message.inputs[0].address],
+    to: message.outputs.map((o) => o.address),
+    amounts: message.outputs.map((o) => {
+      return o.coins.map(coinReducer)[0]
+    }),
   }
 }
 
@@ -395,6 +413,9 @@ export function transactionDetailsReducer(type, message, transaction) {
   switch (type) {
     case lunieMessageTypes.SEND:
       details = sendDetailsReducer(message)
+      break
+    case lunieMessageTypes.SEND_MULTIPLE:
+      details = sendMultipleDetailsReducer(message)
       break
     case lunieMessageTypes.STAKE:
       details = stakeDetailsReducer(message)
@@ -573,6 +594,7 @@ export function transactionReducer(transaction) {
           // type,
           message,
         },
+        events: transaction.logs? transaction.logs.map((l) => l.events) : []
       })
     )
     return returnedMessages

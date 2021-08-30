@@ -16,7 +16,17 @@
                 v-for="(address, index) in transaction.details.to"
                 :key="address + index"
               >
-                {{ address }}
+                to: {{ address }}
+              </p>
+            </template>
+            <template v-if="transactionCaption === `SendMultiple`">
+              <p>
+                {{ sendMultipleTosCount }}
+              </p>
+            </template>
+            <template v-if="transactionCaption === `ReceiveMultiple`">
+              <p>
+                {{ receiveMultipleSenderAddress }}
               </p>
             </template>
             <template v-if="transactionCaption === `Receive`">
@@ -25,6 +35,17 @@
                 :key="address + index"
               >
                 {{ address }}
+              </p>
+            </template>
+            <template
+              v-if="
+                transactionCaption === `Create ISCN Record` ||
+                transactionCaption === `Update ISCN Record` ||
+                transactionCaption === `Change ISCN Ownership`
+              "
+            >
+              <p>
+                {{ iscnId }}
               </p>
             </template>
           </div>
@@ -68,6 +89,7 @@
 </template>
 
 <script>
+import BigNumber from 'bignumber.js'
 import { mapState } from 'vuex'
 import { lunieMessageTypes } from '~/common/lunie-message-types'
 import { prettyLong } from '~/common/numbers'
@@ -97,6 +119,16 @@ export default {
           } else {
             return 'Send'
           }
+        case lunieMessageTypes.SEND_MULTIPLE:
+          if (
+            this.transaction.rawMessage.message.outputs.filter(
+              (a) => a.address === this.session.address
+            ).length > 0
+          ) {
+            return 'ReceiveMultiple'
+          } else {
+            return 'SendMultiple'
+          }
         case lunieMessageTypes.STAKE:
           return `Stake`
         case lunieMessageTypes.RESTAKE:
@@ -109,16 +141,66 @@ export default {
           return `Vote`
         case lunieMessageTypes.CLAIM_REWARDS:
           return `Claim Rewards`
+        case lunieMessageTypes.CREATE_ISCN_RECORD:
+          return `Create ISCN Record`
+        case lunieMessageTypes.UPDATE_ISCN_RECORD:
+          return `Update ISCN Record`
+        case lunieMessageTypes.CHANGE_ISCN_OWNERSHIP:
+          return `Change ISCN Ownership`
         case lunieMessageTypes.UNKNOWN:
-          return this.transaction.rawMessage.type.split('/Msg')[1]
+          return this.transaction.rawMessage.message['@type'].split('/')[1]
         /* istanbul ignore next */
         default:
           return ``
       }
     },
+    iscnId() {
+      if (
+        this.transaction.type === lunieMessageTypes.CREATE_ISCN_RECORD ||
+        this.transaction.type === lunieMessageTypes.UPDATE_ISCN_RECORD ||
+        this.transaction.type === lunieMessageTypes.CHANGE_ISCN_OWNERSHIP
+      ) {
+        for (let i = 0; i < this.transaction.events.length; i++) {
+          if (this.transaction.events[i]) {
+            for (let j = 0; j < this.transaction.events[i].length; j++) {
+              const iscnEvent = this.transaction.events[i][j].attributes.find((a)=> a.key === 'iscn_id') // eslint-disable-line prettier/prettier
+              if (iscnEvent) return iscnEvent.value
+            }
+          }
+        }
+        return 'Can not find ISCN ID'
+      } else {
+        return ''
+      }
+    },
+    receiveMultipleSenderAddress() {
+      if (
+        this.transaction.rawMessage.message.outputs.filter(
+          (a) => a.address === this.session.address
+        ).length > 0
+      ) {
+        return `from: ${this.transaction.rawMessage.message.inputs[0].address}`
+      } else {
+        return ''
+      }
+    },
+    sendMultipleTosCount() {
+      let receiverCount = 0
+      if (this.transaction.rawMessage.message.outputs) {
+        receiverCount = this.transaction.rawMessage.message.outputs.length
+      }
+      return `to ${receiverCount} addresses`
+    },
     imagePath() {
       try {
-        const imgName = this.transactionCaption.replace(/\s+/g, '')
+        let imgName = this.transactionCaption.replace(/\s+/g, '')
+        if (
+          imgName === 'CreateISCNRecord' ||
+          imgName === 'UpdateISCNRecord' ||
+          imgName === 'ChangeISCNOwnership'
+        ) {
+          imgName = 'ISCN'
+        }
         return require(`../../assets/images/transactions/${imgName}.svg`)
       } catch {
         return require('../../assets/images/transactions/Unknown.svg')
@@ -133,12 +215,39 @@ export default {
       ].includes(this.transaction.type)
     },
     amounts() {
-      if (this.transaction.details.amounts) {
+      if (
+        this.transaction.details.amounts &&
+        this.transaction.type !== lunieMessageTypes.SEND_MULTIPLE) { // eslint-disable-line prettier/prettier
         return this.transaction.details.amounts
       } else if (this.transaction.details.amount) {
         return Array.isArray(this.transaction.details.amount)
           ? this.transaction.details.amount
           : [this.transaction.details.amount]
+
+        // sendMultiple:
+      } else if (
+        this.transaction.type === lunieMessageTypes.SEND_MULTIPLE &&
+        this.transaction.details.from[0] === this.session.address // eslint-disable-line prettier/prettier
+      ) {
+        let totalAmount = new BigNumber(0)
+        this.transaction.details.amounts.forEach((a) => {
+          totalAmount = totalAmount.plus(a.amount)
+        })
+        const sendAmount = {}
+        if (totalAmount) {
+          sendAmount.amount = totalAmount.toFixed()
+          sendAmount.denom = this.transaction.details.amounts[0].denom
+        }
+        return [sendAmount]
+
+        // receiveMultiple:
+      } else if (this.transaction.type === lunieMessageTypes.SEND_MULTIPLE) {
+        const targetReceiverIndex = this.transaction.details.to.findIndex(
+          (o) => o === this.session.address
+        )
+        const receivedLIKE =
+          this.transaction.details.amounts[targetReceiverIndex]
+        return [receivedLIKE]
       }
       return null
     },

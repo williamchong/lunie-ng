@@ -37,7 +37,7 @@ export default {
       return hash
     },
     hex() {
-      const x = (this.hash & 0x00ffffff).toString(16).toUpperCase() // eslint-disable-line
+      const x = (this.hash & 0x00ffffff).toString(16).toUpperCase() // eslint-disable-line unicorn/number-literal-case
       return '#' + '00000'.substring(0, 6 - x.length) + x
     },
   },
