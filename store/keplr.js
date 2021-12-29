@@ -68,7 +68,7 @@ export const actions = {
           ),
           coinType: 118,
           gasPriceStep: {
-            low: 0.01,
+            low: 1,
             average: 10,
             high: 1000,
           },
