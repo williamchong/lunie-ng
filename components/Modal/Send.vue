@@ -56,9 +56,11 @@
           class="amount"
           placeholder="0"
           type="number"
+          :add-on="denomOptions.length === 1 ? amount.denom : undefined"
           @keyup.enter.native="enterPressed"
         />
         <CommonField
+          v-if="denomOptions.length > 1"
           v-model="amount.denom"
           :title="`Select the token you wish to use`"
           :options="denomOptions | availableDenoms(index, amounts)"
