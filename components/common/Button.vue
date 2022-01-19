@@ -69,12 +69,12 @@ export default {
   width: auto;
   min-width: 100px;
   padding: 8px 10px;
-  color: var(--white);
+  color: var(--primary);
   margin: 0;
   border-radius: var(--border-radius);
   cursor: pointer;
-  background: var(--primary);
-  border: 2px solid var(--primary);
+  background: var(--button);
+  border: 2px solid var(--button);
   transition: all 0.5s ease;
   white-space: nowrap;
   outline: none;
@@ -82,12 +82,13 @@ export default {
 }
 
 .button:hover {
-  background: var(--primary-hover);
-  border-color: var(--primary-hover);
+  background: var(--button-hover);
+  border-color: var(--button-hover);
 }
 
 .button:disabled {
   opacity: 0.6;
+  color: var(--gray-600);
   background: var(--dim);
   border-color: var(--dim);
   cursor: default;
@@ -116,7 +117,7 @@ export default {
 }
 
 .button.secondary:hover:not(:disabled) {
-  background: var(--gray-200);
+  background: var(--button-light);
 }
 
 .addon-max {

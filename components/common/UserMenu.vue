@@ -75,7 +75,7 @@ h4 {
 
 .icon-button:hover {
   cursor: pointer;
-  color: var(--blue-700);
+  color: var(--teal-800);
 }
 
 .button.menu-button {

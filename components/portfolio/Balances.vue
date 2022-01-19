@@ -169,7 +169,7 @@ h1 {
 
 .icon-button i {
   font-size: 14px;
-  color: var(--white);
+  color: var(--secondary);
   font-weight: 900;
 }
 

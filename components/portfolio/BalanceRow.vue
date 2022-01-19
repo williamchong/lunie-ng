@@ -202,7 +202,7 @@ td {
 
 .icon-button {
   border-radius: 50%;
-  background: var(--primary);
+  background: var(--button);
   border: none;
   outline: none;
   height: 2rem;
@@ -214,13 +214,13 @@ td {
 }
 
 .icon-button:hover {
-  background: var(--primary-hover);
+  background: var(--button-hover);
   cursor: pointer;
 }
 
 .icon-button i {
   font-size: 14px;
-  color: var(--white);
+  color: var(--primary);
   font-weight: 900;
 }
 </style>

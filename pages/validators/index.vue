@@ -131,7 +131,7 @@ export default {
 }
 
 .toggle-button.active {
-  background: var(--blue-200);
+  background: var(--teal-200);
 }
 
 .toggle-button:last-child {
@@ -145,7 +145,7 @@ export default {
 }
 
 .toggles .toggle-button:hover:not(:disabled) {
-  background: var(--blue-100);
+  background: var(--teal-100);
   border-color: var(--input-bc);
 }
 
