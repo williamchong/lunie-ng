@@ -9,17 +9,10 @@
         route="/explore"
       />
       <AddressLiSession
-        v-if="initialized"
-        icon="web"
-        title="Lunie Browser Extension"
-        route="/extension"
-      />
-      <AddressLiSession
         icon="web"
         title="Keplr Browser Extension"
         route="/keplr"
       />
-      <AddressLiSession icon="usb" title="Ledger Nano" route="/ledger" />
       <AddressLiSession
         v-if="network.authcoreURL"
         icon="https"
@@ -62,7 +55,6 @@ export default {
   }),
   computed: {
     ...mapState(['session']),
-    ...mapState('extension', ['initialized']),
   },
   mounted() {
     this.$store.dispatch('extension/init')
