@@ -10,7 +10,10 @@
         >
           <h4>{{ phase.title }}</h4>
           <span class="time">
-            <template v-if="phase.time">{{ phase.time | fromNow }}</template>
+            <template v-if="phase.time && phase.time.length !== 0">
+              {{ phase.time | date }}<br />
+              ({{ phase.time | fromNow }})
+            </template>
             <template v-else>?</template>
           </span>
         </li>
@@ -21,11 +24,12 @@
 
 <script>
 import dayjs from 'dayjs'
-import { fromNow } from '~/common/time'
+import { date, fromNow } from '~/common/time'
 
 export default {
   name: `Timeline`,
   filters: {
+    date,
     fromNow,
   },
   props: {
@@ -55,7 +59,7 @@ export default {
   max-width: 1024px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin: 0 auto;
   width: 100%;
 }

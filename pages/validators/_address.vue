@@ -131,9 +131,11 @@
         </div>
         <div>
           <h4>Last Commission Change</h4>
-          <span>{{
-            isBlankField(validator.commissionUpdateTime, fromNow)
-          }}</span>
+          <span
+            >{{ isBlankField(validator.commissionUpdateTime, date) }} ({{
+              isBlankField(validator.commissionUpdateTime, fromNow)
+            }})</span
+          >
         </div>
       </section>
     </div>
@@ -155,7 +157,7 @@
 import { mapState } from 'vuex'
 import { shortDecimals, fullDecimals, percent } from '~/common/numbers'
 import { noBlanks } from '~/common/strings'
-import { fromNow } from '~/common/time'
+import { date, fromNow } from '~/common/time'
 import network from '~/common/network'
 
 export default {
@@ -165,6 +167,7 @@ export default {
     fullDecimals,
     percent,
     noBlanks,
+    date,
     fromNow,
   },
   data: () => ({
@@ -209,6 +212,7 @@ export default {
     },
   },
   methods: {
+    date,
     shortDecimals,
     fullDecimals,
     percent,

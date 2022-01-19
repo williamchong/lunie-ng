@@ -9,9 +9,11 @@
           {{ proposal.title }}
         </h3>
       </div>
-      <span v-if="proposal.creationTime" class="time">{{
-        proposal.creationTime | fromNow
-      }}</span>
+      <span v-if="proposal.creationTime" class="time"
+        >{{ proposal.creationTime | date }} ({{
+          proposal.creationTime | fromNow
+        }})</span
+      >
       <span v-else class="time">n/a</span>
     </div>
   </div>
@@ -19,12 +21,13 @@
 
 <script>
 import { mapState } from 'vuex'
-import { fromNow } from '~/common/time'
+import { date, fromNow } from '~/common/time'
 import { getProposalStatus } from '~/common/proposal-status'
 
 export default {
   name: `ProposalRow`,
   filters: {
+    date,
     fromNow,
   },
   props: {

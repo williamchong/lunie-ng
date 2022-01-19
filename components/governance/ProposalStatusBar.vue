@@ -3,7 +3,9 @@
     <div v-if="status.value === governanceStatusEnum.DEPOSITING">
       <div class="top row">
         <div v-if="statusBeginTime" class="time">
-          Entered {{ status.title }} {{ statusBeginTime | fromNow }}
+          Entered {{ status.title }}
+          {{ statusBeginTime | date }}
+          ({{ statusBeginTime | fromNow }})
         </div>
         <div>ID: {{ proposal.proposalId }}</div>
       </div>
@@ -23,8 +25,9 @@
     <div>
       <div class="top row">
         <div v-if="statusBeginTime" class="time">
-          {{ getStatusBeginTimeMessage(status.value) }}
-          {{ new Date(statusBeginTime) | fromNow }}
+          {{ getStatusBeginTimeMessage(status.value) }} at
+          {{ new Date(statusBeginTime) | date }}
+          ({{ new Date(statusBeginTime) | fromNow }})
         </div>
         <div>ID: {{ proposal.proposalId }}</div>
       </div>
@@ -100,7 +103,7 @@
 
 <script>
 import ProgressBar from 'vue-simple-progress'
-import { fromNow } from '~/common/time'
+import { date, fromNow } from '~/common/time'
 import { governanceStatusEnum } from '~/common/proposal-status'
 import { prettyInt, percentInt, percent } from '~/common/numbers'
 import network from '~/common/network'
@@ -111,6 +114,7 @@ export default {
     ProgressBar,
   },
   filters: {
+    date,
     fromNow,
     prettyInt,
     percentInt,
