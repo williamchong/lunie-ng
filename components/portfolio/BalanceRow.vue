@@ -10,7 +10,7 @@
           }"
         />
         <div class="total">
-          {{ balance.total | bigFigureOrShortDecimals }}
+          {{ balance.total | prettyLong }}
           {{ balance.denom }}
         </div>
         <div v-if="balance.sourceChain" class="chain">
@@ -29,7 +29,7 @@
           totalRewardsPerDenom && totalRewardsPerDenom[balance.denom] > 0.001
         "
       >
-        +{{ totalRewardsPerDenom[balance.denom] | bigFigureOrShortDecimals }}
+        +{{ totalRewardsPerDenom[balance.denom] | prettyLong }}
         {{ balance.denom }}
       </h2>
       <h2 v-else-if="!unstake">0</h2>
@@ -41,7 +41,7 @@
       class="available"
     >
       <span v-if="balance.type === 'STAKE'" class="available-amount">
-        {{ balance.available | bigFigureOrShortDecimals }}
+        {{ balance.available | prettyLong }}
       </span>
     </td>
 
@@ -69,14 +69,14 @@
   </tr>
 </template>
 <script>
-import { bigFigureOrShortDecimals } from '~/common/numbers'
+import { prettyLong } from '~/common/numbers'
 import { fromNow } from '~/common/time'
 import network from '~/common/network'
 
 export default {
   name: `BalanceRow`,
   filters: {
-    bigFigureOrShortDecimals,
+    prettyLong,
     fromNow,
   },
   props: {
@@ -126,9 +126,6 @@ export default {
       }
       return this.image ? '' : colour
     },
-  },
-  methods: {
-    bigFigureOrShortDecimals,
   },
 }
 </script>
