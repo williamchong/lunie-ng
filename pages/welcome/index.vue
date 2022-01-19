@@ -4,11 +4,6 @@
     <h2>{{ network.description }}</h2>
     <div class="session-list">
       <AddressLiSession
-        icon="language"
-        title="Explore with any address"
-        route="/explore"
-      />
-      <AddressLiSession
         icon="web"
         title="Keplr Browser Extension"
         route="/keplr"
@@ -18,6 +13,11 @@
         icon="https"
         title="Authcore"
         route="/authcore"
+      />
+      <AddressLiSession
+        icon="language"
+        title="Explore with any address"
+        route="/explore"
       />
       <template v-if="network.localSigning">
         <AddressLiSession
