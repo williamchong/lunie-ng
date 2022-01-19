@@ -36,6 +36,7 @@
       </div>
     </div>
 
+    <div class="id">#{{ proposal.id }}</div>
     <div class="content-container">
       <h2>{{ proposal.title }}</h2>
 
@@ -161,11 +162,16 @@ h2 {
   align-items: center;
 }
 
+.id {
+  font-weight: bold;
+  font-size: 2rem;
+}
+
 .content-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 2rem 0;
+  padding: 0.5rem 0 2rem;
 }
 
 .proposer {
@@ -180,7 +186,6 @@ h2 {
 
 .summary {
   font-size: 12px;
-  padding: 2rem 0 0 2px;
   font-style: italic;
   text-align: justify;
 }
@@ -221,6 +226,10 @@ h2 {
 }
 
 @media screen and (max-width: 1023px) {
+  .id {
+    text-align: center;
+  }
+
   .content-container {
     flex-direction: column;
     text-align: center;

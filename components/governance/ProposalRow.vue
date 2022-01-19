@@ -2,8 +2,11 @@
   <div class="proposal" @click="$router.push(`/proposals/${proposal.id}`)">
     <div class="proposal-content">
       <div>
-        <div class="status">
-          <CommonStatus :label="status.value" />
+        <div class="proposal-content-header">
+          <div class="id">#{{ proposal.id }}</div>
+          <div class="status">
+            <CommonStatus :label="status.value" />
+          </div>
         </div>
         <h3 class="title">
           {{ proposal.title }}
@@ -75,6 +78,18 @@ h3 {
 .proposal-content {
   display: flex;
   justify-content: space-between;
+}
+
+.proposal-content-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.id {
+  margin-right: 16px;
+  color: var(--primary);
+  font-weight: bold;
 }
 
 .time {

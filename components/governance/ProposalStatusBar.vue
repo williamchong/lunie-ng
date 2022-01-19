@@ -7,7 +7,6 @@
           {{ statusBeginTime | date }}
           ({{ statusBeginTime | fromNow }})
         </div>
-        <div>ID: {{ proposal.proposalId }}</div>
       </div>
       <div v-if="depositCount">{{ depositCount }} Deposits</div>
       <ProgressBar
@@ -29,7 +28,6 @@
           {{ new Date(statusBeginTime) | date }}
           ({{ new Date(statusBeginTime) | fromNow }})
         </div>
-        <div>ID: {{ proposal.proposalId }}</div>
       </div>
       <div
         v-if="status.value === governanceStatusEnum.VOTING"
