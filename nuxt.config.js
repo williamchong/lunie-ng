@@ -25,7 +25,13 @@ export default {
           'Lunie 3 is a simple staking and governance interface for proof-of-stake blockchains',
       },
     ],
-    link: [{ rel: 'icon', type: 'image/png', href: '/favicon.png' }],
+    link: [
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/icon?family=Material+Icons',
+      },
+      { rel: 'icon', type: 'image/png', href: '/favicon.png' },
+    ],
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
@@ -56,8 +62,6 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    // https://github.com/anteriovieira/nuxt-material-design-icons
-    'nuxt-material-design-icons',
     // https://github.com/microcipcip/cookie-universal/tree/master/packages/cookie-universal-nuxt#readme
     'cookie-universal-nuxt',
   ],
