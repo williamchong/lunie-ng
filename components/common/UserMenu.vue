@@ -5,9 +5,7 @@
         <h4>Your Address</h4>
         <CommonUserMenuAddress :address="session.address" />
       </div>
-      <i class="material-icons icon-button" @click="$router.push('/welcome')">
-        person
-      </i>
+      <i class="material-icons icon-button" @click="signOut">logout</i>
     </div>
     <template v-else>
       <CommonButton
@@ -27,6 +25,12 @@ export default {
   name: `CommonUserMenu`,
   computed: {
     ...mapState(['session']),
+  },
+  methods: {
+    signOut() {
+      this.$router.push('/welcome')
+      this.$store.dispatch('signIn', undefined)
+    },
   },
 }
 </script>
