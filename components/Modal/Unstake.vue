@@ -155,7 +155,7 @@ export default {
         min: (x) => Number(x) >= SMALLEST,
         maxDecimals: (x) => {
           return Number(x).toString().split('.').length > 1
-            ? Number(x).toString().split('.')[1].length <= 6
+            ? Number(x).toString().split('.')[1].length <= 9
             : true
         },
       },

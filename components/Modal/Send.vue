@@ -349,7 +349,7 @@ export default {
           return amountsWithDecimals.length > 0
             ? amountsWithDecimals.filter(
                 ({ amount }) =>
-                  Number(amount).toString().split('.')[1].length <= 6
+                  Number(amount).toString().split('.')[1].length <= 9
               ).length === amountsWithDecimals.length
             : true
         },

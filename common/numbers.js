@@ -1,4 +1,4 @@
-const SMALLEST = 1e-6
+const SMALLEST = 1e-9
 // const language = window.navigator.userLanguage || window.navigator.language
 const language = `en` // TODO get from request, window is not available in SSR
 
@@ -18,7 +18,7 @@ function shortDecimals(value) {
 }
 
 function fullDecimals(value) {
-  return setDecimalLength(value, 6)
+  return setDecimalLength(value, 9)
 }
 
 function pretty(number = 0) {

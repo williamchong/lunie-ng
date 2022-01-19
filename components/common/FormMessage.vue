@@ -53,7 +53,7 @@ export default {
           msg = `must be between ${prettyDecimals(this.min)} and ${this.max}`
           break
         case `maxDecimals`:
-          msg = `can have maximum 6 decimals`
+          msg = `can have maximum 9 decimals`
           break
         case `min`:
           msg = `must be greater than ${prettyDecimals(this.min)}`

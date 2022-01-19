@@ -35,7 +35,7 @@
       :type="type"
       :value="value"
       :class="{ field: !addOn }"
-      step="0.000001"
+      step="1"
       @input="updateValue($event.target.value)"
     />
     <div v-if="addOn" class="add-on">{{ addOn }}</div>

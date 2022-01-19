@@ -138,7 +138,7 @@ export default {
         maxDecimals: (x) => {
           if (x) {
             return x.toString().split('.').length > 1
-              ? x.toString().split('.')[1].length <= 6
+              ? x.toString().split('.')[1].length <= 9
               : true
           } else {
             return false
