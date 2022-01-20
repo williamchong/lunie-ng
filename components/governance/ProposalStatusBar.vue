@@ -1,6 +1,6 @@
 <template>
   <section id="proposal-votes" class="status-bar">
-    <div v-if="status.value === governanceStatusEnum.DEPOSITING">
+    <template v-if="status.value === governanceStatusEnum.DEPOSITING">
       <div class="top row">
         <div v-if="statusBeginTime" class="time">
           Entered {{ status.title }}
@@ -20,8 +20,8 @@
         <div>{{ depositPercentage | prettyInt }}%</div>
         <div>{{ depositTotal }} {{ network.stakingDenom }}</div>
       </div>
-    </div>
-    <div>
+    </template>
+    <template v-else>
       <div class="top row">
         <div v-if="statusBeginTime" class="time">
           {{ getStatusBeginTimeMessage(status.value) }} at
@@ -42,13 +42,13 @@
         </div>
       </div>
       <ProgressBar
-        v-if="voteCount > 0"
+        v-if="progressBarTally"
         size="large"
-        :val="proposal.detailedVotes.votingThresholdYes * 100"
+        :val="progressBarTally.value * 100"
         :bar-border-radius="8"
-        bar-color="var(--primary)"
+        :bar-color="progressBarTally.color"
       />
-    </div>
+    </template>
     <div
       v-if="status.value !== governanceStatusEnum.DEPOSITING"
       class="bottom row"
@@ -176,6 +176,28 @@ export default {
         Number(this.proposal.tally.abstain) /
           Number(this.proposal.tally.total) || 0
       )
+    },
+    progressBarTally() {
+      return [
+        {
+          color: 'var(--success)',
+          value: this.percentageYes,
+        },
+        {
+          color: 'var(--danger)',
+          value: this.percentageNo,
+        },
+        {
+          color: 'var(--warning)',
+          value: this.percentageVeto,
+        },
+        {
+          color: 'var(--dim)',
+          value: this.percentageAbstain,
+        },
+      ].reduce((maxTally, tally) => {
+        return !maxTally || tally.value > maxTally.value ? tally : maxTally
+      })
     },
   },
   methods: {
