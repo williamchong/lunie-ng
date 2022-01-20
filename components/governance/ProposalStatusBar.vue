@@ -209,7 +209,7 @@ export default {
           return `Entered Deposit Period`
         case `REJECTED`:
           return `Rejected`
-        case `PASSES`:
+        case `PASSED`:
           return `Passed`
         default:
           return `Last change`

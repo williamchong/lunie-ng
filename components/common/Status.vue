@@ -25,31 +25,34 @@ export default {
   border-radius: var(--border-radius);
   width: fit-content;
   text-align: center;
+  border: 2px solid transparent;
 }
 
 .status.inactive {
-  background: var(--orange-200);
   color: var(--orange-800);
+  border-color: var(--orange-200);
 }
 
 .status.passed,
 .status.active {
-  background: var(--green-200);
   color: var(--green-800);
+  border-color: var(--green-200);
 }
 
 .status.rejected {
-  background: var(--red-200);
   color: var(--red-800);
+  border-color: var(--red-200);
 }
 
 .status.voting {
   background: var(--teal-200);
   color: var(--teal-800);
+  border-color: var(--teal-200);
 }
 
-.status.depositing {
-  background: var(--purple-200);
-  color: var(--purple-800);
+.status.deposit {
+  background: var(--yellow-200);
+  color: var(--yellow-800);
+  border-color: var(--yellow-200);
 }
 </style>
