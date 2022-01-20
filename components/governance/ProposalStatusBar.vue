@@ -74,7 +74,7 @@
             {{ network.stakingDenom }}</span
           >
         </div>
-        <div v-if="proposal.tally.veto > 0" class="veto vote-box">
+        <div class="veto vote-box">
           <div>
             <span class="dot">Veto</span>
             <span>{{ percentageVeto | percent }}</span>
@@ -84,7 +84,7 @@
             {{ network.stakingDenom }}</span
           >
         </div>
-        <div v-if="proposal.tally.abstain > 0" class="abstain vote-box">
+        <div class="abstain vote-box">
           <div>
             <span class="dot">Abstain</span>
             <span>{{ percentageAbstain | percent }}</span>
