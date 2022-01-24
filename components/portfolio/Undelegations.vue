@@ -62,6 +62,10 @@ export default {
           value: `smallName`,
         },
         {
+          title: `Amount`,
+          value: `total`,
+        },
+        {
           title: `End Time`,
           value: `endTime`,
         },

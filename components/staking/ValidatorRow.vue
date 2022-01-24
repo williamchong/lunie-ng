@@ -18,9 +18,6 @@
         <h3 class="validator-name">
           {{ validator.name }}
         </h3>
-        <template v-if="undelegation">
-          <h4>{{ undelegation.amount }}</h4>
-        </template>
       </div>
     </td>
     <template v-if="!undelegation">
@@ -56,8 +53,11 @@
       </td>
     </template>
     <template v-else>
-      <td>
-        {{ undelegation.endTime | fromNow }}
+      <td class="cell">
+        {{ undelegation.amount | prettyLong }}
+      </td>
+      <td class="cell">
+        {{ undelegation.endTime | date }} ({{ undelegation.endTime | fromNow }})
       </td>
     </template>
   </tr>
@@ -65,32 +65,25 @@
 
 <script>
 import { bigFigureOrPercent, prettyLong } from '../../common/numbers'
-import { fromNow } from '~/common/time'
+import { date, fromNow } from '~/common/time'
 
 export default {
   name: `ValidatorRow`,
   components: {},
   filters: {
     bigFigureOrPercent,
+    date,
     fromNow,
+    prettyLong,
   },
   props: {
     validator: {
       type: Object,
       required: true,
     },
-    /* istanbul ignore next */
-    rewards: {
-      type: Array,
-      default: () => [],
-    },
     index: {
       type: Number,
       required: true,
-    },
-    stakingDenom: {
-      type: String,
-      default: '',
     },
     undelegation: {
       type: Object,
