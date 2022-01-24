@@ -9,13 +9,38 @@
             backgroundColor: hex,
           }"
         />
-        <div class="total">
-          {{ balance.total | prettyLong }}
-          {{ balance.denom }}
+        <div>
+          <div class="total">
+            {{ balance.total | bigFigureOrShortDecimals }}
+            {{ balance.denom }}
+          </div>
+          <div class="small">
+            {{ balance.total | prettyLong }}
+          </div>
         </div>
         <div v-if="balance.sourceChain" class="chain">
           {{ balance.sourceChain }}
         </div>
+      </div>
+    </td>
+
+    <td>
+      <div>
+        {{ balance.delegations | bigFigureOrShortDecimals }}
+        {{ balance.denom }}
+      </div>
+      <div class="small">
+        {{ balance.delegations | prettyLong }}
+      </div>
+    </td>
+
+    <td>
+      <div>
+        {{ balance.undelegations | bigFigureOrShortDecimals }}
+        {{ balance.denom }}
+      </div>
+      <div class="small">
+        {{ balance.undelegations | prettyLong }}
       </div>
     </td>
 
@@ -24,15 +49,14 @@
       :key="balance.denom + '_rewards'"
       class="rewards"
     >
-      <h2
-        v-if="
-          totalRewardsPerDenom && totalRewardsPerDenom[balance.denom] > 0.001
-        "
-      >
-        +{{ totalRewardsPerDenom[balance.denom] | prettyLong }}
-        {{ balance.denom }}
-      </h2>
-      <h2 v-else-if="!unstake">0</h2>
+      <template v-if="balance.rewards > 0">
+        <div>
+          {{ balance.rewards | bigFigureOrShortDecimals }}
+          {{ balance.denom }}
+        </div>
+        <div class="small">{{ balance.rewards | prettyLong }}</div>
+      </template>
+      <div v-else-if="!unstake">0</div>
     </td>
 
     <td
@@ -40,9 +64,15 @@
       :key="balance.denom + '_available'"
       class="available"
     >
-      <span v-if="balance.type === 'STAKE'" class="available-amount">
-        {{ balance.available | prettyLong }}
-      </span>
+      <template v-if="balance.type === 'STAKE'">
+        <div class="available-amount">
+          {{ balance.available | bigFigureOrShortDecimals }}
+          {{ balance.denom }}
+        </div>
+        <div class="small">
+          {{ balance.available | prettyLong }}
+        </div>
+      </template>
     </td>
 
     <td
@@ -69,28 +99,21 @@
   </tr>
 </template>
 <script>
-import { prettyLong } from '~/common/numbers'
+import { bigFigureOrShortDecimals, prettyLong } from '~/common/numbers'
 import { fromNow } from '~/common/time'
 import network from '~/common/network'
 
 export default {
   name: `BalanceRow`,
   filters: {
+    bigFigureOrShortDecimals,
     prettyLong,
     fromNow,
   },
   props: {
-    balances: {
-      type: Array,
-      required: true,
-    },
     balance: {
       type: Object,
       required: true,
-    },
-    totalRewardsPerDenom: {
-      type: Object,
-      default: () => {},
     },
     stake: {
       type: Boolean,
@@ -169,6 +192,11 @@ td {
   font-size: 10px;
   margin-left: 0.5rem;
   margin-top: 0.3rem;
+}
+
+.small {
+  font-size: 0.8rem;
+  opacity: 0.5;
 }
 
 .token-icon {

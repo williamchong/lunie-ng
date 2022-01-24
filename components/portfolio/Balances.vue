@@ -19,9 +19,7 @@
       <PortfolioBalanceRow
         v-for="balance in sortedBalances"
         :key="balance.id"
-        :balances="balances"
         :balance="balance"
-        :total-rewards-per-denom="totalRewardsPerDenom"
         :send="true"
         @open-send-modal="openSendModal(balance.denom)"
       />
@@ -50,7 +48,13 @@ export default {
   }),
   computed: {
     ...mapState([`session`]),
-    ...mapState(`data`, ['balances', 'balancesLoaded', 'rewards']),
+    ...mapState(`data`, [
+      'balances',
+      'balancesLoaded',
+      'rewards',
+      'delegations',
+      'undelegations',
+    ]),
     readyToWithdraw() {
       return Boolean(
         Object.values(this.totalRewardsPerDenom).find((value) => value > 0)
@@ -72,14 +76,41 @@ export default {
         }
       }, {})
     },
+    totalDelegationsPerDenom() {
+      return this.delegations.reduce((all, delegation) => {
+        return {
+          ...all,
+          [delegation.denom]:
+            parseFloat(delegation.amount) + (all[delegation.denom] || 0),
+        }
+      }, {})
+    },
+    totalUndelegationsPerDenom() {
+      return this.undelegations.reduce((all, undelegation) => {
+        return {
+          ...all,
+          [network.stakingDenom]:
+            parseFloat(undelegation.amount) + (all[network.stakingDenom] || 0),
+        }
+      }, {})
+    },
     sortedBalances() {
       const orderedBalances = orderBy(
-        this.balances.map((balance) => ({
-          ...balance,
-          rewards: this.totalRewardsPerDenom[balance.denom]
-            ? this.totalRewardsPerDenom[balance.denom].amount
-            : 0,
-        })),
+        this.balances.map((balance) => {
+          const { denom } = balance
+          return {
+            ...balance,
+            rewards: this.totalRewardsPerDenom[denom]
+              ? this.totalRewardsPerDenom[denom]
+              : 0,
+            delegations: this.totalDelegationsPerDenom[denom]
+              ? this.totalDelegationsPerDenom[denom]
+              : 0,
+            undelegations: this.totalUndelegationsPerDenom[denom]
+              ? this.totalUndelegationsPerDenom[denom]
+              : 0,
+          }
+        }),
         [this.sort.property],
         [this.sort.order]
       )
@@ -90,6 +121,14 @@ export default {
         {
           title: `Total`,
           value: `total`,
+        },
+        {
+          title: `Staked`,
+          value: `delegations`,
+        },
+        {
+          title: `Unstaking`,
+          value: `undelegations`,
         },
         {
           title: `Rewards`,

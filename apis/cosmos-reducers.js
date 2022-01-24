@@ -634,6 +634,7 @@ export function delegationReducer(delegation, validator, active) {
     validator,
     amount,
     active,
+    denom,
   }
 }
 
