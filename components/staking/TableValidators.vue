@@ -18,8 +18,7 @@
 </template>
 
 <script>
-import BigNumber from 'bignumber.js'
-
+import { orderBy } from '~/common/array'
 import network from '~/common/network'
 
 export default {
@@ -56,8 +55,8 @@ export default {
   }),
   computed: {
     sortedEnrichedValidators() {
-      return this.validators
-        .map((validator) => {
+      return orderBy(
+        this.validators.map((validator) => {
           const delegation = this.getDelegation(validator)
           const delegationAmount = delegation ? delegation.amount : 0
           const rewards = this.getRewards(validator)
@@ -69,29 +68,14 @@ export default {
             : 0
           return {
             ...validator,
-            delegationAmount: BigNumber(delegationAmount),
-            rewardAmount: BigNumber(rewardAmount),
+            delegationAmount,
+            rewardAmount,
             smallName: validator.name ? validator.name.toLowerCase() : '',
           }
-        })
-        .sort((aValidator, bValidator) => {
-          const { property, order } = this.sort
-          const isDesc = order === 'desc'
-          const aProperty = aValidator[property]
-          const bProperty = bValidator[property]
-          // Compare any number in BigNumber
-          if (!new BigNumber(aProperty).isNaN()) {
-            const aNumber = new BigNumber(aProperty)
-            const bNumber = new BigNumber(bProperty)
-            if (aNumber.isEqualTo(bNumber)) return 0
-            if (aNumber.isLessThan(bNumber)) return isDesc ? 1 : -1
-            return isDesc ? -1 : 1
-          }
-          // Otherwise, use string compare
-          return (
-            `${aProperty}`.localeCompare(`${bProperty}`) * (isDesc ? -1 : 1)
-          )
-        })
+        }),
+        this.sort.property,
+        this.sort.order
+      )
     },
     properties() {
       return [

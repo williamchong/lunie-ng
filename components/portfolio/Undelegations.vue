@@ -11,7 +11,7 @@
       :loaded="undelegationsLoaded"
     >
       <StakingValidatorRow
-        v-for="(undelegation, index) in undelegations"
+        v-for="(undelegation, index) in sortedEnrichedUndelegations"
         :key="undelegation.validatorAddress + undelegation.startHeight"
         :index="index"
         :validator="undelegation.validator"
@@ -24,7 +24,8 @@
 
 <script>
 import { mapState } from 'vuex'
-import network from '~/network'
+
+import { orderBy } from '~/common/array'
 
 export default {
   name: `Undelegations`,
@@ -36,20 +37,18 @@ export default {
   }),
   computed: {
     ...mapState('data', ['undelegations', 'undelegationsLoaded']),
-    balances() {
-      return this.undelegations.map((undelegation) => {
-        return {
+    sortedEnrichedUndelegations() {
+      return orderBy(
+        this.undelegations.map((undelegation) => ({
           ...undelegation,
-          total: undelegation.amount,
-          denom: network.stakingDenom,
-        }
-      })
-    },
-    readyUndelegations() {
-      const now = new Date()
-      return !!this.undelegations.find(({ endTime }) => {
-        return new Date(endTime) <= now
-      })
+          undelegationAmount: undelegation.amount,
+          smallName: undelegation.validator.name
+            ? undelegation.validator.name.toLowerCase()
+            : '',
+        })),
+        this.sort.property,
+        this.sort.order
+      )
     },
     properties() {
       return [
@@ -63,7 +62,7 @@ export default {
         },
         {
           title: `Amount`,
-          value: `total`,
+          value: `undelegationAmount`,
         },
         {
           title: `End Time`,
