@@ -35,7 +35,7 @@
       >
         <div class="vote-data">
           <span
-            >{{ votePercentage | percentInt }} of
+            >Turnout: {{ votePercentage | percentInt }}
             {{ network.stakingDenom }}</span
           >
           <span v-if="voteCount">({{ voteCount }} Votes)</span>
