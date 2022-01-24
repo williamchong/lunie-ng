@@ -259,17 +259,21 @@ export default class CosmosAPI {
       ? formattedDeposits.reduce((depositAmountAggregator, deposit) => {
         return (depositAmountAggregator += deposit.amount.length ? Number(deposit.amount[0].amount) : 0)
       }, 0)
-      : []
+      : 0
 
+    const { chainToViewConversionFactor } = this.network.getCoinLookup(
+      this.network.stakingDenom,
+      'viewDenom'
+    )
     return {
       deposits: formattedDeposits,
-      depositsSum: deposits.length ? Number(depositsSum).toFixed(6) : [],
+      depositsSum: deposits.length ? Number(depositsSum).toFixed(9) : 0,
       percentageDepositsNeeded: deposits
         ? percentage(
           depositsSum,
-          BigNumber(depositParams.min_deposit[0].amount)
+          BigNumber(depositParams.min_deposit[0].amount).times(chainToViewConversionFactor)
         )
-        : [],
+        : 0,
       votes: votes.length
         ? votes.map((vote) => this.reducers.voteReducer(vote, this.validators))
         : [],

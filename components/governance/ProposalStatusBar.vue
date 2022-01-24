@@ -8,7 +8,6 @@
           ({{ statusBeginTime | fromNow }})
         </div>
       </div>
-      <div v-if="depositCount">{{ depositCount }} Deposits</div>
       <ProgressBar
         v-if="depositTotal > 0"
         size="large"
@@ -17,8 +16,11 @@
         bar-color="var(--primary)"
       />
       <div class="bottom row">
+        <div>
+          {{ depositTotal }} {{ network.stakingDenom }} ({{ depositCount }}
+          Deposits)
+        </div>
         <div>{{ depositPercentage | prettyInt }}%</div>
-        <div>{{ depositTotal }} {{ network.stakingDenom }}</div>
       </div>
     </template>
     <template v-else>
@@ -153,7 +155,7 @@ export default {
       return this.proposal.detailedVotes.depositsSum
     },
     depositPercentage() {
-      return this.proposal.detailedVotes.percentageDepositsNeeded
+      return this.proposal.detailedVotes.percentageDepositsNeeded * 100
     },
     percentageYes() {
       return (
