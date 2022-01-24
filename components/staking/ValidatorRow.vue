@@ -18,33 +18,32 @@
         <h3 class="validator-name">
           {{ validator.name }}
         </h3>
-        <template v-if="!undelegation">
-          <div v-if="delegation.amount > 0">
-            <h4>
-              {{ delegation.amount | bigFigureOrShortDecimals }}
-            </h4>
-            <h5
-              v-if="
-                rewards.find(
-                  (reward) =>
-                    reward.denom === stakingDenom && reward.amount > 0.000001
-                )
-              "
-            >
-              <span
-                >+{{
-                  filterStakingDenomReward() | bigFigureOrShortDecimals
-                }}</span
-              >
-            </h5>
-          </div>
-        </template>
-        <template v-else>
+        <template v-if="undelegation">
           <h4>{{ undelegation.amount }}</h4>
         </template>
       </div>
     </td>
     <template v-if="!undelegation">
+      <td class="cell">
+        {{
+          validator.delegationAmount > 0
+            ? prettyLong(validator.delegationAmount)
+            : `--`
+        }}
+      </td>
+      <td
+        :class="[
+          'cell',
+          'reward',
+          {
+            'reward--has': validator.rewardAmount > 0,
+          },
+        ]"
+      >
+        {{
+          validator.rewardAmount > 0 ? prettyLong(validator.rewardAmount) : `--`
+        }}
+      </td>
       <td class="cell">
         {{
           validator.expectedReturns
@@ -65,17 +64,13 @@
 </template>
 
 <script>
-import {
-  bigFigureOrPercent,
-  bigFigureOrShortDecimals,
-} from '../../common/numbers'
+import { bigFigureOrPercent, prettyLong } from '../../common/numbers'
 import { fromNow } from '~/common/time'
 
 export default {
   name: `ValidatorRow`,
   components: {},
   filters: {
-    bigFigureOrShortDecimals,
     bigFigureOrPercent,
     fromNow,
   },
@@ -83,11 +78,6 @@ export default {
     validator: {
       type: Object,
       required: true,
-    },
-    /* istanbul ignore next */
-    delegation: {
-      type: Object,
-      default: () => ({}),
     },
     /* istanbul ignore next */
     rewards: {
@@ -109,13 +99,7 @@ export default {
   },
   methods: {
     bigFigureOrPercent,
-    bigFigureOrShortDecimals,
-    filterStakingDenomReward() {
-      const stakingDenomRewards = this.rewards.filter(
-        (reward) => reward.denom === this.stakingDenom
-      )
-      return stakingDenomRewards.length > 0 ? stakingDenomRewards[0].amount : 0
-    },
+    prettyLong,
   },
 }
 </script>
@@ -138,7 +122,7 @@ h5 {
   font-size: var(--text-xs);
 }
 
-h5 span {
+.cell.reward.reward--has {
   color: var(--success);
 }
 

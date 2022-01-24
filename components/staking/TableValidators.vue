@@ -10,9 +10,6 @@
       :key="validator.operatorAddress"
       :index="index"
       :validator="validator"
-      :delegation="getDelegation(validator)"
-      :rewards="getRewards(validator)"
-      :staking-denom="stakingDenom"
     />
     <template slot="empty">
       <slot name="empty"></slot>
@@ -21,7 +18,8 @@
 </template>
 
 <script>
-import { orderBy } from 'lodash'
+import BigNumber from 'bignumber.js'
+
 import network from '~/common/network'
 
 export default {
@@ -58,15 +56,42 @@ export default {
   }),
   computed: {
     sortedEnrichedValidators() {
-      const orderedValidators = orderBy(
-        this.validators.map((validator) => ({
-          ...validator,
-          smallName: validator.name ? validator.name.toLowerCase() : '',
-        })),
-        [this.sort.property],
-        [this.sort.order]
-      )
-      return orderedValidators
+      return this.validators
+        .map((validator) => {
+          const delegation = this.getDelegation(validator)
+          const delegationAmount = delegation ? delegation.amount : 0
+          const rewards = this.getRewards(validator)
+          const rewardAmount = rewards.find(
+            (reward) =>
+              reward.denom === this.stakingDenom && reward.amount > 0.000000001
+          )
+            ? this.filterStakingDenomReward(rewards)
+            : 0
+          return {
+            ...validator,
+            delegationAmount: BigNumber(delegationAmount),
+            rewardAmount: BigNumber(rewardAmount),
+            smallName: validator.name ? validator.name.toLowerCase() : '',
+          }
+        })
+        .sort((aValidator, bValidator) => {
+          const { property, order } = this.sort
+          const isDesc = order === 'desc'
+          const aProperty = aValidator[property]
+          const bProperty = bValidator[property]
+          // Compare any number in BigNumber
+          if (!new BigNumber(aProperty).isNaN()) {
+            const aNumber = new BigNumber(aProperty)
+            const bNumber = new BigNumber(bProperty)
+            if (aNumber.isEqualTo(bNumber)) return 0
+            if (aNumber.isLessThan(bNumber)) return isDesc ? 1 : -1
+            return isDesc ? -1 : 1
+          }
+          // Otherwise, use string compare
+          return (
+            `${aProperty}`.localeCompare(`${bProperty}`) * (isDesc ? -1 : 1)
+          )
+        })
     },
     properties() {
       return [
@@ -79,7 +104,15 @@ export default {
           value: `smallName`,
         },
         {
+          title: `Staked`,
+          value: `delegationAmount`,
+        },
+        {
           title: `Rewards`,
+          value: `rewardAmount`,
+        },
+        {
+          title: `Expected Returns`,
           value: `expectedReturns`,
         },
         {
@@ -105,6 +138,12 @@ export default {
             )
         )
       }
+    },
+    filterStakingDenomReward(rewards) {
+      const stakingDenomRewards = rewards.filter(
+        (reward) => reward.denom === this.stakingDenom
+      )
+      return stakingDenomRewards.length > 0 ? stakingDenomRewards[0].amount : 0
     },
   },
 }
