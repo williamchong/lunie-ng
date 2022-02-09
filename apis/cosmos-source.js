@@ -608,7 +608,7 @@ export default class CosmosAPI {
   }
 
   async getPageCount(url) {
-    const response = await this.get(url + `&pagination.limit=${PAGE_RECORDS_COUNT}`)
+    const response = await this.get(url + `&pagination.count_total=true&pagination.limit=${PAGE_RECORDS_COUNT}`)
     return Math.ceil(response.pagination.total / PAGE_RECORDS_COUNT)
   }
 }
