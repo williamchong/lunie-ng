@@ -253,7 +253,7 @@ export default {
     feeDenom: network.stakingDenom,
   }),
   computed: {
-    ...mapState(['session', 'currrentModalOpen']),
+    ...mapState(['session']),
     ...mapState('data', ['balances', 'balancesLoaded']),
     ...mapState('ledger', ['transport']),
     networkFees() {
@@ -263,6 +263,7 @@ export default {
       return !this.session || this.session.sessionType === SESSION_TYPES.EXPLORE
     },
     steps() {
+      if (!this.session) return []
       const isExtensionSession =
         this.session.sessionType === SESSION_TYPES.KEPLR
       return [
@@ -335,7 +336,7 @@ export default {
     },
     goToSession() {
       this.close()
-
+      this.$store.dispatch('data/setRedirectRoute', this.$route)
       this.$router.push('/welcome')
     },
     isValidInput(property) {

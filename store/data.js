@@ -25,6 +25,7 @@ export const state = () => ({
   transactionsLoading: false,
   moreTransactionsAvailable: true,
   api: undefined,
+  redirectRoute: undefined,
 })
 
 export const mutations = {
@@ -58,6 +59,9 @@ export const mutations = {
     state.rewards = []
     state.transactions = []
     state.moreTransactionsAvailable = true
+  },
+  setRedirectRoute(state, route) {
+    state.redirectRoute = route
   },
 }
 
@@ -298,5 +302,8 @@ export const actions = {
   },
   resetSessionData({ commit }) {
     commit('resetSessionData')
+  },
+  setRedirectRoute({ commit }, route) {
+    commit('setRedirectRoute', route)
   },
 }

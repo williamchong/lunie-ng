@@ -68,8 +68,11 @@
 
 <script>
 import { mapState } from 'vuex'
+import signInRedirect from '~/mixins/signInRedirect'
+
 export default {
   name: `SessionLedger`,
+  mixins: [signInRedirect],
   layout: 'session',
   data: () => ({
     copySuccess: false,
@@ -127,7 +130,7 @@ export default {
     },
     async signInAndRedirect(account) {
       await this.signIn(account)
-      this.$router.push('/')
+      this.signInRedirect()
     },
   },
 }

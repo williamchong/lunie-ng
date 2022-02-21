@@ -25,9 +25,11 @@
 import { mapState } from 'vuex'
 import { AuthCoreWidgets } from '@likecoin/authcore-js'
 import network from '~/common/network'
+import signInRedirect from '~/mixins/signInRedirect'
 
 export default {
   name: `SessionAuthcore`,
+  mixins: [signInRedirect],
   layout: 'session',
   data() {
     return {
@@ -81,7 +83,7 @@ export default {
     },
     async signInAndRedirect(account) {
       await this.signIn(account)
-      this.$router.push('/')
+      this.signInRedirect()
     },
   },
 }
