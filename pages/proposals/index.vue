@@ -18,7 +18,7 @@
         </div>
       </CommonCard>
 
-      <div class="past-proposals-row">
+      <div class="past-proposals-button-container">
         <CommonButton
           value="Past Proposals"
           type="secondary"
@@ -127,9 +127,10 @@ h4 {
   margin-right: 1rem;
 }
 
-.past-proposals-row {
+.past-proposals-button-container {
   display: flex;
   justify-content: center;
+  margin: 2rem 0 0;
 }
 
 @media screen and (max-width: 1023px) {
