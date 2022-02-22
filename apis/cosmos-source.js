@@ -252,7 +252,7 @@ export default class CosmosAPI {
     await this.dataReady
 
     const id = proposal.proposalId
-    const dataAvailable = this.dataExistsInThisChain(proposal.submitTime)
+    const dataAvailable = this.dataExistsInThisChain(proposal.creationTime)
     const votingComplete = ['PROPOSAL_STATUS_PASSED', 'PROPOSAL_STATUS_REJECTED'].includes(proposal.status)
 
     const votes = dataAvailable ? await this.queryAutoPaginate(`/cosmos/gov/v1beta1/proposals/${id}/votes`) : []
@@ -386,11 +386,10 @@ export default class CosmosAPI {
       tallyParams,
       depositParams,
     )
-    const detailsProposal = {
-      ...proposal,
+    return this.reducers.proposalDetailsReducer(
+      proposal,
       detailedVotes,
-    }
-    return detailsProposal
+    )
   }
 
   async getTopVoters() {

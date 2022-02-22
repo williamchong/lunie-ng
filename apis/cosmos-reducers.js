@@ -77,7 +77,7 @@ export function tallyReducer(
 ) {
   // if the proposal is out of voting, use the final result for the tally
   if (proposalFinalized(proposal)) {
-    tally = proposal.final_tally_result
+    tally = proposal.finalTallyResult || proposal.final_tally_result
   }
 
   const totalVoted = getStakingCoinViewAmount(
@@ -528,6 +528,8 @@ export function proposalReducer(
     votingStartTime: proposal.voting_start_time,
     votingEndTime: proposal.voting_end_time,
     tally: tallyReducer(proposal, undefined, totalBondedTokens),
+    finalTallyResult: proposal.final_tally_result,
+    totalBondedTokens,
     deposit: getDeposit(proposal),
     summary: getProposalSummary(
       proposalTypeEnumDictionary[typeString]
@@ -537,12 +539,11 @@ export function proposalReducer(
 
 export function proposalDetailsReducer(
   reducedProposal,
-  totalBondedTokens,
   detailedVotes
 ) {
   return {
     ...reducedProposal,
-    tally: tallyReducer(reducedProposal, detailedVotes.tally, totalBondedTokens),
+    tally: tallyReducer(reducedProposal, detailedVotes.tally, reducedProposal.totalBondedTokens),
     detailedVotes,
   }
 }
