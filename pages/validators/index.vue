@@ -75,6 +75,9 @@ export default {
       }
     },
   },
+  async mounted() {
+    await this.$store.dispatch('data/getValidators')
+  },
   methods: {
     defaultSelectorsController(selector) {
       this.allValidators = false

@@ -1,6 +1,6 @@
 <template>
   <div class="transactions">
-    <div v-if="!transactionsLoaded" class="container">
+    <div v-if="!transactionsLoaded || !validatorsLoaded" class="container">
       <CommonLoader />
     </div>
 
@@ -45,6 +45,7 @@ export default {
   computed: {
     ...mapState('data', [
       `validators`,
+      `validatorsLoaded`,
       `transactions`,
       `transactionsLoaded`,
       `transactionsLoading`,
@@ -52,9 +53,12 @@ export default {
     ]),
     ...mapState(['session']),
     oldChainDataMessage() {
-      return `If you're missing transactions from this list 
+      return `If you're missing transactions from this list
       they may have occured before the last blockchain upgrade.`
     },
+  },
+  mounted() {
+    this.$store.dispatch('data/getValidators')
   },
   methods: {
     async loadTransactions() {

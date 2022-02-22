@@ -10,6 +10,9 @@
 export default {
   name: `PagePortfolio`,
   middleware: 'addressRequired',
+  mounted() {
+    this.$store.dispatch('data/getValidators')
+  },
 }
 </script>
 <style scoped>

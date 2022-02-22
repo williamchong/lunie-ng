@@ -72,10 +72,8 @@ export const actions = {
   // this is never awaited in the code
   async refresh({ dispatch }) {
     const calls = [
-      dispatch('getValidators'),
       dispatch('getBlock'),
       dispatch('refreshSession'),
-      dispatch('getProposals'),
       dispatch('getGovernanceOverview'),
     ]
     await Promise.all(calls)

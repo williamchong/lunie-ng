@@ -65,6 +65,9 @@ export default {
       `governanceOverviewLoaded`,
     ]),
   },
+  mounted() {
+    this.$store.dispatch('data/getProposals')
+  },
 }
 </script>
 <style scoped>

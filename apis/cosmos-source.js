@@ -24,12 +24,19 @@ export default class CosmosAPI {
     })
     this.getBlock(network.minBlockHeight).then(block => {
       this.firstBlock = block
-    })
-    this.loadValidators().then((validators) => {
-      this.validators = keyBy(validators, 'operatorAddress')
       this.resolveReady()
     })
+    this.validatorsState = 'idle'
+    this.validatorsReady = new Promise((resolve) => {
+      this.resolveValidatorsReady = resolve
+    })
+  }
 
+  async waitForDataReady() {
+    if (this.validatorsState === 'idle') {
+      this.loadValidators()
+    }
+    await Promise.all([this.dataReady, this.validatorsReady])
   }
 
   getChainStartTime() {
@@ -193,12 +200,12 @@ export default class CosmosAPI {
   }
 
   async getValidator(address) {
-    await this.dataReady
+    await this.waitForDataReady()
     return this.validators[address]
   }
 
   async getValidators() {
-    await this.dataReady
+    await this.waitForDataReady()
     return Object.values(this.validators)
   }
   async getStakingSupply() {
@@ -206,6 +213,8 @@ export default class CosmosAPI {
     return BigNumber(res.supply[0].amount)
   }
   async loadValidators() {
+    if (this.validatorsState === 'pending') return
+    this.validatorsState = 'pending'
     const [
       { result: bondedValidators },
       { result: unbondingValidators },
@@ -226,7 +235,11 @@ export default class CosmosAPI {
       BigNumber(0)
     )
     const allValidators = bondedValidators.concat(unbondingValidators, unbondedValidators, unspecifiedValidators)
-    return allValidators.map(validator => reducers.validatorReducer(validator, annualProvision, totalShares, pool))
+    const reducedValidators = allValidators.map(validator => reducers.validatorReducer(validator, annualProvision, totalShares, pool))
+    this.validators = keyBy(reducedValidators, 'operatorAddress')
+    this.validatorsState = 'fetched'
+    this.resolveValidatorsReady()
+    return reducedValidators
   }
 
   async getInflation() {
@@ -236,7 +249,7 @@ export default class CosmosAPI {
   }
 
   async getDetailedVotes(proposal, tallyParams, depositParams) {
-    await this.dataReady
+    await this.waitForDataReady()
 
     const dataAvailable = this.dataExistsInThisChain(proposal.submit_time)
     const votingComplete = ['PROPOSAL_STATUS_PASSED', 'PROPOSAL_STATUS_REJECTED'].includes(proposal.status)
@@ -337,7 +350,7 @@ export default class CosmosAPI {
   }
 
   async getProposals() {
-    await this.dataReady
+    await this.waitForDataReady()
     const [
       proposalsResponse,
       { pool },
@@ -370,7 +383,7 @@ export default class CosmosAPI {
   }
 
   async getTopVoters() {
-    await this.dataReady
+    await this.waitForDataReady()
     // for now defaulting to pick the 10 largest voting powers
     return take(
       reverse(
@@ -513,7 +526,7 @@ export default class CosmosAPI {
   }
 
   async getDelegationsForDelegator(address) {
-    await this.dataReady
+    await this.waitForDataReady()
 
     const delegations = await this.queryAutoPaginate(
       `cosmos/staking/v1beta1/delegations/${address}`
@@ -531,7 +544,7 @@ export default class CosmosAPI {
   }
 
   async getUndelegationsForDelegator(address) {
-    await this.dataReady
+    await this.waitForDataReady()
     const undelegations =
       (await this.queryAutoPaginate(
         `cosmos/staking/v1beta1/delegators/${address}/unbonding_delegations`
@@ -586,7 +599,7 @@ export default class CosmosAPI {
   }
 
   async getRewards(delegatorAddress) {
-    await this.dataReady
+    await this.waitForDataReady()
     const result = await this.query(
       `cosmos/distribution/v1beta1/delegators/${delegatorAddress}/rewards`
     )
