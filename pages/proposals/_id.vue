@@ -11,6 +11,8 @@
         @open-deposit-modal="onDeposit"
       />
 
+      <GovernanceProposalDescription :proposal="proposal" />
+
       <GovernanceProposalStatusBar
         v-if="tallyHasValues"
         :status="status"
@@ -18,20 +20,20 @@
         :total-votes="proposal.tally.total"
         :proposal="proposal"
       />
-
-      <GovernanceParticipantList
-        v-if="participants"
-        :participants="participants"
-        :show-amounts="true"
-      />
-
-      <template
-        v-if="proposal.detailedVotes && proposal.detailedVotes.timeline.length"
-      >
-        <GovernanceTimeline :timeline="proposal.detailedVotes.timeline" />
+      <div v-if="!proposal.detailedVotes" class="loading container">
+        <CommonLoader />
+      </div>
+      <template v-else>
+        <GovernanceTimeline
+          v-if="proposal.detailedVotes.timeline.length"
+          :timeline="proposal.detailedVotes.timeline"
+        />
+        <GovernanceParticipantList
+          v-if="participants"
+          :participants="participants"
+          :show-amounts="true"
+        />
       </template>
-
-      <GovernanceProposalDescription :proposal="proposal" />
 
       <ModalDeposit
         v-if="
@@ -170,6 +172,11 @@ export default {
   border-radius: var(--border-radius);
   background: var(--white);
   max-width: 1024px;
+}
+
+.loading.container {
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 3px 0 var(--gray-400);
 }
 
 @media screen and (max-width: 667px) {

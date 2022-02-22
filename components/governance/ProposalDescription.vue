@@ -9,6 +9,7 @@
         <pre>{{ proposal.description }}</pre>
       </div>
     </section>
+    <p class="summary">{{ proposal.summary }}</p>
   </div>
 </template>
 
@@ -38,6 +39,12 @@ h4 {
   box-shadow: 0 0 3px 0 var(--gray-400);
   border-radius: var(--border-radius);
   background: var(--white);
+}
+
+.summary {
+  margin-top: 2rem;
+  font-style: italic;
+  font-size: 12px;
 }
 
 .description {

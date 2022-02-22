@@ -40,7 +40,7 @@
     <div class="content-container">
       <h2>{{ proposal.title }}</h2>
 
-      <div class="proposer-and-summary-container">
+      <div class="proposer-container">
         <div v-if="proposal.proposer" class="proposer">
           <span>Proposed By:</span>
           <div v-if="proposal.proposer.validator" class="proposer-details">
@@ -56,7 +56,6 @@
           </div>
           <CommonAddress v-else :address="proposal.proposer.address" />
         </div>
-        <p class="summary">{{ proposal.summary }}</p>
       </div>
     </div>
 
@@ -138,8 +137,6 @@ export default {
 
 h2 {
   font-size: 32px;
-  margin-bottom: 2rem;
-  max-width: 500px;
   font-weight: 500;
   color: var(--bright);
 }
@@ -150,7 +147,7 @@ h2 {
 
 .page-links li {
   display: inline-block;
-  padding: 2rem 2rem 2rem 0;
+  padding: 1rem 2rem 1rem 0;
 }
 
 .action-button {
@@ -168,9 +165,6 @@ h2 {
 }
 
 .content-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   padding: 0.5rem 0 2rem;
 }
 
@@ -182,12 +176,6 @@ h2 {
   background: var(--white);
   display: flex;
   align-items: center;
-}
-
-.summary {
-  font-size: 12px;
-  font-style: italic;
-  text-align: justify;
 }
 
 .icon-container {
@@ -207,7 +195,7 @@ h2 {
   display: none;
 }
 
-.proposer-and-summary-container {
+.proposer-container {
   max-width: 300px;
 }
 
@@ -234,6 +222,10 @@ h2 {
     flex-direction: column;
     text-align: center;
     align-items: center;
+  }
+
+  .proposer-container {
+    margin: 0 auto;
   }
 
   .page-links {

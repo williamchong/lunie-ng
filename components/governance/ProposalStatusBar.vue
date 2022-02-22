@@ -1,13 +1,19 @@
 <template>
   <section id="proposal-votes" class="status-bar">
-    <template v-if="status.value === governanceStatusEnum.DEPOSITING">
-      <div class="top row">
-        <div v-if="statusBeginTime" class="time">
+    <div class="top row">
+      <div v-if="statusBeginTime" class="time">
+        <template v-if="status.value === governanceStatusEnum.DEPOSITING">
           Entered {{ status.title }}
-          {{ statusBeginTime | date }}
-          ({{ statusBeginTime | fromNow }})
-        </div>
+        </template>
+        <template v-else>
+          {{ getStatusBeginTimeMessage(status.value) }} at
+        </template>
+        {{ statusBeginTime | date }}
+        ({{ statusBeginTime | fromNow }})
       </div>
+    </div>
+    <CommonLoader v-if="!proposal.detailedVotes" />
+    <template v-else-if="status.value === governanceStatusEnum.DEPOSITING">
       <ProgressBar
         v-if="depositTotal > 0"
         size="large"
@@ -24,13 +30,6 @@
       </div>
     </template>
     <template v-else>
-      <div class="top row">
-        <div v-if="statusBeginTime" class="time">
-          {{ getStatusBeginTimeMessage(status.value) }} at
-          {{ new Date(statusBeginTime) | date }}
-          ({{ new Date(statusBeginTime) | fromNow }})
-        </div>
-      </div>
       <div
         v-if="status.value === governanceStatusEnum.VOTING"
         class="vote-data-container"
@@ -50,54 +49,51 @@
         :bar-border-radius="8"
         :bar-color="progressBarTally.color"
       />
-    </template>
-    <div
-      v-if="status.value !== governanceStatusEnum.DEPOSITING"
-      class="bottom row"
-    >
-      <div class="row votes">
-        <div class="yes vote-box">
-          <div>
-            <span class="dot">Yes</span>
-            <span>{{ percentageYes | percent }}</span>
+      <div class="bottom row">
+        <div class="row votes">
+          <div class="yes vote-box">
+            <div>
+              <span class="dot">Yes</span>
+              <span>{{ percentageYes | percent }}</span>
+            </div>
+            <span class="bottom-row"
+              >{{ proposal.tally.yes | prettyInt }}
+              {{ network.stakingDenom }}</span
+            >
           </div>
-          <span class="bottom-row"
-            >{{ proposal.tally.yes | prettyInt }}
-            {{ network.stakingDenom }}</span
-          >
-        </div>
-        <div class="no vote-box">
-          <div>
-            <span class="dot">No</span>
-            <span>{{ percentageNo | percent }}</span>
+          <div class="no vote-box">
+            <div>
+              <span class="dot">No</span>
+              <span>{{ percentageNo | percent }}</span>
+            </div>
+            <span class="bottom-row"
+              >{{ proposal.tally.no | prettyInt }}
+              {{ network.stakingDenom }}</span
+            >
           </div>
-          <span class="bottom-row"
-            >{{ proposal.tally.no | prettyInt }}
-            {{ network.stakingDenom }}</span
-          >
-        </div>
-        <div class="veto vote-box">
-          <div>
-            <span class="dot">Veto</span>
-            <span>{{ percentageVeto | percent }}</span>
+          <div class="veto vote-box">
+            <div>
+              <span class="dot">Veto</span>
+              <span>{{ percentageVeto | percent }}</span>
+            </div>
+            <span class="bottom-row"
+              >{{ proposal.tally.veto | prettyInt }}
+              {{ network.stakingDenom }}</span
+            >
           </div>
-          <span class="bottom-row"
-            >{{ proposal.tally.veto | prettyInt }}
-            {{ network.stakingDenom }}</span
-          >
-        </div>
-        <div class="abstain vote-box">
-          <div>
-            <span class="dot">Abstain</span>
-            <span>{{ percentageAbstain | percent }}</span>
+          <div class="abstain vote-box">
+            <div>
+              <span class="dot">Abstain</span>
+              <span>{{ percentageAbstain | percent }}</span>
+            </div>
+            <span class="bottom-row"
+              >{{ proposal.tally.abstain | prettyInt }}
+              {{ network.stakingDenom }}</span
+            >
           </div>
-          <span class="bottom-row"
-            >{{ proposal.tally.abstain | prettyInt }}
-            {{ network.stakingDenom }}</span
-          >
         </div>
       </div>
-    </div>
+    </template>
   </section>
 </template>
 
