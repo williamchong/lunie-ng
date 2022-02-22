@@ -25,14 +25,19 @@
         :show-amounts="true"
       />
 
-      <template v-if="proposal.detailedVotes.timeline.length">
+      <template
+        v-if="proposal.detailedVotes && proposal.detailedVotes.timeline.length"
+      >
         <GovernanceTimeline :timeline="proposal.detailedVotes.timeline" />
       </template>
 
       <GovernanceProposalDescription :proposal="proposal" />
 
       <ModalDeposit
-        v-if="status.value === governanceStatusEnum.DEPOSITING"
+        v-if="
+          proposal.detailedVotes &&
+          status.value === governanceStatusEnum.DEPOSITING
+        "
         ref="modalDeposit"
         :proposal-id="proposalId"
         :proposal-title="proposal.title || ''"
@@ -107,29 +112,44 @@ export default {
         .find((value) => value)
     },
     participants() {
-      if (
-        this.proposal.detailedVotes.votes &&
-        this.proposal.detailedVotes.votes.length > 0
-      ) {
-        return this.proposal.detailedVotes.votes.map((vote) => ({
-          ...vote.voter,
-          amount: vote.amount,
-          option: vote.option,
-        }))
-      } else if (
-        this.proposal.detailedVotes.deposits &&
-        this.proposal.detailedVotes.deposits.length > 0
-      ) {
-        // a bit hacky but working
-        return this.proposal.detailedVotes.deposits.map((deposit) => ({
-          ...deposit.depositer,
-          amount: deposit.amount[0],
-        }))
+      const { detailedVotes } = this.proposal
+      if (detailedVotes) {
+        if (detailedVotes.votes && detailedVotes.votes.length > 0) {
+          return detailedVotes.votes.map((vote) => ({
+            ...vote.voter,
+            amount: vote.amount,
+            option: vote.option,
+          }))
+        } else if (
+          detailedVotes.deposits &&
+          detailedVotes.deposits.length > 0
+        ) {
+          // a bit hacky but working
+          return detailedVotes.deposits.map((deposit) => ({
+            ...deposit.depositer,
+            amount: deposit.amount[0],
+          }))
+        }
       }
       return undefined
     },
   },
+  watch: {
+    proposal() {
+      this.getProposalDetails()
+    },
+  },
+  mounted() {
+    this.$store.dispatch('data/getProposals')
+    if (this.proposal) {
+      this.getProposalDetails()
+    }
+  },
   methods: {
+    getProposalDetails() {
+      if (this.proposal.detailedVotes) return
+      this.$store.dispatch('data/getProposalDetails', this.proposal)
+    },
     onVote() {
       this.$refs.modalVote.open()
     },

@@ -71,11 +71,7 @@ export const actions = {
   },
   // this is never awaited in the code
   async refresh({ dispatch }) {
-    const calls = [
-      dispatch('getBlock'),
-      dispatch('refreshSession'),
-      dispatch('getGovernanceOverview'),
-    ]
+    const calls = [dispatch('getBlock'), dispatch('refreshSession')]
     await Promise.all(calls)
   },
   async refreshSession({ dispatch }) {
@@ -241,6 +237,25 @@ export const actions = {
         {
           type: 'danger',
           message: 'Getting proposals failed:' + err.message,
+        },
+        { root: true }
+      )
+    }
+  },
+  async getProposalDetails({ commit, state: { api, proposals } }, proposal) {
+    try {
+      const detailsProposals = await api.getProposalDetails(proposal)
+      const updatedProposals = proposals.map((p) =>
+        proposal.id === p.id ? detailsProposals : p
+      )
+      commit('setProposals', updatedProposals)
+      commit('setProposalsLoaded', true)
+    } catch (err) {
+      commit(
+        'notifications/add',
+        {
+          type: 'danger',
+          message: 'Getting proposal details failed:' + err.message,
         },
         { root: true }
       )

@@ -36,7 +36,7 @@ export default class CosmosAPI {
     if (this.validatorsState === 'idle') {
       this.loadValidators()
     }
-    await Promise.all([this.dataReady, this.validatorsReady])
+    return Promise.all([this.dataReady, this.validatorsReady])
   }
 
   getChainStartTime() {
@@ -249,14 +249,15 @@ export default class CosmosAPI {
   }
 
   async getDetailedVotes(proposal, tallyParams, depositParams) {
-    await this.waitForDataReady()
+    await this.dataReady
 
-    const dataAvailable = this.dataExistsInThisChain(proposal.submit_time)
+    const id = proposal.proposalId
+    const dataAvailable = this.dataExistsInThisChain(proposal.submitTime)
     const votingComplete = ['PROPOSAL_STATUS_PASSED', 'PROPOSAL_STATUS_REJECTED'].includes(proposal.status)
 
-    const votes = dataAvailable ? await this.queryAutoPaginate(`/cosmos/gov/v1beta1/proposals/${proposal.proposal_id}/votes`) : []
-    const deposits = dataAvailable ? await this.queryAutoPaginate(`/cosmos/gov/v1beta1/proposals/${proposal.proposal_id}/deposits`) : []
-    const tally = votingComplete ? proposal.final_tally_result : (await this.query(`/cosmos/gov/v1beta1/proposals/${proposal.proposal_id}/tally`)).tally
+    const votes = dataAvailable ? await this.queryAutoPaginate(`/cosmos/gov/v1beta1/proposals/${id}/votes`) : []
+    const deposits = dataAvailable ? await this.queryAutoPaginate(`/cosmos/gov/v1beta1/proposals/${id}/deposits`) : []
+    const tally = votingComplete ? proposal.tally : (await this.query(`/cosmos/gov/v1beta1/proposals/${id}/tally`)).tally
 
     const totalVotingParticipation = BigNumber(tally.yes)
       .plus(tally.abstain)
@@ -300,36 +301,36 @@ export default class CosmosAPI {
       ),
       tally: tally,
       timeline: [
-        proposal.submit_time
-          ? { title: `Created`, time: proposal.submit_time }
+        proposal.creationTime
+          ? { title: `Created`, time: proposal.creationTime }
           : undefined,
-        proposal.deposit_end_time
+        proposal.depositEndTime
           ? {
             title: `Deposit Period Ends`,
             // the deposit period can end before the time as the limit is reached already
             time:
-              proposal.voting_start_time !== GOLANG_NULL_TIME &&
-                new Date(proposal.voting_start_time) <
-                new Date(proposal.deposit_end_time)
-                ? proposal.voting_start_time
-                : proposal.deposit_end_time,
+              proposal.votingStartTime !== GOLANG_NULL_TIME &&
+                new Date(proposal.votingStartTime) <
+                new Date(proposal.depositEndTime)
+                ? proposal.votingStartTime
+                : proposal.depositEndTime,
           }
           : [],
-        proposal.voting_start_time
+        proposal.votingStartTime
           ? {
             title: `Voting Period Starts`,
             time:
-              proposal.voting_start_time !== GOLANG_NULL_TIME
-                ? proposal.voting_start_time
+              proposal.votingStartTime !== GOLANG_NULL_TIME
+                ? proposal.votingStartTime
                 : [],
           }
           : [],
-        proposal.voting_end_time
+        proposal.votingEndTime
           ? {
             title: `Voting Period Ends`,
             time:
-              proposal.voting_end_time !== GOLANG_NULL_TIME
-                ? proposal.voting_end_time
+              proposal.votingEndTime !== GOLANG_NULL_TIME
+                ? proposal.votingEndTime
                 : [],
           }
           : [],
@@ -350,36 +351,46 @@ export default class CosmosAPI {
   }
 
   async getProposals() {
-    await this.waitForDataReady()
+    await this.dataReady
     const [
       proposalsResponse,
       { pool },
-      { tally_params: tallyParams },
-      { deposit_params: depositParams },
     ] = await Promise.all([
       this.queryAutoPaginate('cosmos/gov/v1beta1/proposals'),
       this.query('cosmos/staking/v1beta1/pool'),
-      this.query(`/cosmos/gov/v1beta1/params/tallying`),
-      this.query(`/cosmos/gov/v1beta1/params/deposit`)
     ])
     if (!Array.isArray(proposalsResponse)) return []
 
     const proposals = await Promise.all(
       proposalsResponse.map(async (proposal) => {
-        const detailedVotes = await this.getDetailedVotes(
-          proposal,
-          tallyParams,
-          depositParams,
-        )
         return this.reducers.proposalReducer(
           proposal,
           pool.bonded_tokens,
-          detailedVotes,
         )
       })
     )
 
     return orderBy(proposals, 'id', 'desc')
+  }
+
+  async getProposalDetails(proposal) {
+    const [
+      { tally_params: tallyParams },
+      { deposit_params: depositParams },
+    ] = await Promise.all([
+      this.query(`/cosmos/gov/v1beta1/params/tallying`),
+      this.query(`/cosmos/gov/v1beta1/params/deposit`)
+    ])
+    const detailedVotes = await this.getDetailedVotes(
+      proposal,
+      tallyParams,
+      depositParams,
+    )
+    const detailsProposal = {
+      ...proposal,
+      detailedVotes,
+    }
+    return detailsProposal
   }
 
   async getTopVoters() {

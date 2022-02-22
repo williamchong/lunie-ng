@@ -65,7 +65,16 @@ function getTotalVotePercentage(proposal, totalBondedTokens, totalVoted) {
   )
 }
 
-export function tallyReducer(proposal, tally, totalBondedTokens) {
+export function tallyReducer(
+  proposal,
+  tally = {
+    yes: '0',
+    no: '0',
+    abstain: '0',
+    no_with_veto: '0',
+  },
+  totalBondedTokens
+) {
   // if the proposal is out of voting, use the final result for the tally
   if (proposalFinalized(proposal)) {
     tally = proposal.final_tally_result
@@ -502,7 +511,6 @@ function proposalFinalized(proposal) {
 export function proposalReducer(
   proposal,
   totalBondedTokens,
-  detailedVotes
 ) {
   const typeStringArray = proposal.content["@type"].split('.')
   const typeString = typeStringArray[typeStringArray.length - 1];
@@ -516,11 +524,25 @@ export function proposalReducer(
     status: proposal.status,
     statusBeginTime: proposalBeginTime(proposal),
     statusEndTime: proposalEndTime(proposal),
-    tally: tallyReducer(proposal, detailedVotes.tally, totalBondedTokens),
+    depositEndTime: proposal.deposit_end_time,
+    votingStartTime: proposal.voting_start_time,
+    votingEndTime: proposal.voting_end_time,
+    tally: tallyReducer(proposal, undefined, totalBondedTokens),
     deposit: getDeposit(proposal),
     summary: getProposalSummary(
       proposalTypeEnumDictionary[typeString]
     ),
+  }
+}
+
+export function proposalDetailsReducer(
+  reducedProposal,
+  totalBondedTokens,
+  detailedVotes
+) {
+  return {
+    ...reducedProposal,
+    tally: tallyReducer(reducedProposal, detailedVotes.tally, totalBondedTokens),
     detailedVotes,
   }
 }

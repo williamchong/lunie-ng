@@ -140,22 +140,30 @@ export default {
   }),
   computed: {
     voteCount() {
-      return this.proposal.detailedVotes.votesSum
+      return this.proposal.detailedVotes
+        ? this.proposal.detailedVotes.votesSum
+        : 0
     },
     votePercentage() {
       return this.proposal.tally.totalVotedPercentage
     },
     totalVotes() {
-      return this.proposal.detailedVotes.votesSum
+      return this.voteCount
     },
     depositCount() {
-      return this.proposal.detailedVotes.deposits.length
+      return this.proposal.detailedVotes
+        ? this.proposal.detailedVotes.deposits.length
+        : 0
     },
     depositTotal() {
-      return this.proposal.detailedVotes.depositsSum
+      return this.proposal.detailedVotes
+        ? this.proposal.detailedVotes.depositsSum
+        : 0
     },
     depositPercentage() {
-      return this.proposal.detailedVotes.percentageDepositsNeeded * 100
+      return this.proposal.detailedVotes
+        ? this.proposal.detailedVotes.percentageDepositsNeeded * 100
+        : 0
     },
     percentageYes() {
       return (

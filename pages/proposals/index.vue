@@ -1,50 +1,62 @@
 <template>
   <div class="proposals">
-    <div v-if="!proposalsLoaded || !governanceOverviewLoaded">
+    <h3>Proposals</h3>
+    <div v-if="!proposalsLoaded">
       <CommonLoader />
     </div>
     <template v-else>
-      <h3>Proposals</h3>
       <GovernanceProposalRow
-        v-for="proposal in proposals"
+        v-for="proposal in filteredProposals"
         :key="proposal.id"
         :proposal="proposal"
       />
 
-      <CommonCard v-if="!proposals.length">
+      <CommonCard v-if="!filteredProposals.length">
         <div slot="title">No proposals</div>
         <div slot="subtitle">
-          There are no proposals on this blockchain yet.
+          There are no active proposals on this blockchain yet.
         </div>
       </CommonCard>
 
-      <h3>Stats</h3>
-      <div class="data-row">
-        <div>
-          <h4>Community Pool</h4>
-          <p>
-            {{ governanceOverview.treasurySize }}
-            {{ network.stakingDenom }}
-          </p>
-        </div>
-        <div>
-          <h4>Total Staked</h4>
-          <p>
-            {{ governanceOverview.totalStakedAssets }}
-            {{ network.stakingDenom }}
-          </p>
-        </div>
+      <div class="past-proposals-row">
+        <CommonButton
+          value="Past Proposals"
+          type="secondary"
+          @click.native="$router.push('/proposals/past')"
+        />
       </div>
-
-      <h3>Voting Power</h3>
-      <GovernanceParticipantList
-        v-if="
-          governanceOverview.topVoters &&
-          governanceOverview.topVoters.length > 0
-        "
-        :participants="governanceOverview.topVoters"
-      />
     </template>
+
+    <h3>Stats</h3>
+    <div v-if="!governanceOverviewLoaded">
+      <CommonLoader />
+    </div>
+    <div v-else class="data-row">
+      <div>
+        <h4>Community Pool</h4>
+        <p>
+          {{ governanceOverview.treasurySize }}
+          {{ network.stakingDenom }}
+        </p>
+      </div>
+      <div>
+        <h4>Total Staked</h4>
+        <p>
+          {{ governanceOverview.totalStakedAssets }}
+          {{ network.stakingDenom }}
+        </p>
+      </div>
+    </div>
+    <h3>Voting Power</h3>
+    <div v-if="!governanceOverviewLoaded">
+      <CommonLoader />
+    </div>
+    <GovernanceParticipantList
+      v-else-if="
+        governanceOverview.topVoters && governanceOverview.topVoters.length > 0
+      "
+      :participants="governanceOverview.topVoters"
+    />
   </div>
 </template>
 
@@ -64,9 +76,16 @@ export default {
       `proposalsLoaded`,
       `governanceOverviewLoaded`,
     ]),
+    filteredProposals() {
+      const now = Date.now()
+      return this.proposals.filter(
+        (proposal) => new Date(proposal.statusEndTime).getTime() >= now
+      )
+    },
   },
   mounted() {
     this.$store.dispatch('data/getProposals')
+    this.$store.dispatch('data/getGovernanceOverview')
   },
 }
 </script>
@@ -106,6 +125,11 @@ h4 {
 
 .data-row div:first-child {
   margin-right: 1rem;
+}
+
+.past-proposals-row {
+  display: flex;
+  justify-content: center;
 }
 
 @media screen and (max-width: 1023px) {

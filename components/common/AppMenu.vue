@@ -26,7 +26,6 @@
       <nuxt-link
         class="app-menu-item"
         to="/proposals"
-        exact="exact"
         title="Proposals"
         @click.native="handleClick()"
       >
