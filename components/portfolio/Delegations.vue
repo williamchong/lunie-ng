@@ -7,6 +7,7 @@
       :rewards="rewards"
       :loaded="delegationsLoaded"
       class="table-validators"
+      sort-property="delegationAmount"
     >
       <template slot="empty">
         <div class="no-results">

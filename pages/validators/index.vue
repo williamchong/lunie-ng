@@ -31,6 +31,7 @@
       :rewards="rewards"
       :search-term="searchTerm ? true : false"
       :loaded="validatorsLoaded"
+      sort-property="random"
     />
   </div>
 </template>

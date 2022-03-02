@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { orderBy } from '~/common/array'
+import { orderBy, shuffle } from '~/common/array'
 import network from '~/common/network'
 
 export default {
@@ -45,36 +45,48 @@ export default {
       type: Boolean,
       default: true,
     },
-  },
-  data: () => ({
-    sort: {
-      property: `votingPower`,
-      order: `desc`,
+    sortProperty: {
+      type: String,
+      default: 'votingPower',
     },
-    stakingDenom: network.stakingDenom,
-  }),
+  },
+  data() {
+    return {
+      sort: {
+        property: this.sortProperty,
+        order: `desc`,
+      },
+      stakingDenom: network.stakingDenom,
+    }
+  },
   computed: {
     sortedEnrichedValidators() {
-      return orderBy(
-        this.validators.map((validator) => {
-          const delegation = this.getDelegation(validator)
-          const delegationAmount = delegation ? delegation.amount : 0
-          const rewards = this.getRewards(validator)
-          const rewardAmount = rewards.find(
-            (reward) =>
-              reward.denom === this.stakingDenom && reward.amount > 0.000000001
-          )
-            ? this.filterStakingDenomReward(rewards)
-            : 0
-          return {
-            ...validator,
-            delegationAmount,
-            rewardAmount,
-            smallName: validator.name ? validator.name.toLowerCase() : '',
-          }
-        }),
-        this.sort.property,
-        this.sort.order
+      const enrichedValidators = this.validators.map((validator) => {
+        const delegation = this.getDelegation(validator)
+        const delegationAmount = delegation ? delegation.amount : 0
+        const rewards = this.getRewards(validator)
+        const rewardAmount = rewards.find(
+          (reward) =>
+            reward.denom === this.stakingDenom && reward.amount > 0.000000001
+        )
+          ? this.filterStakingDenomReward(rewards)
+          : 0
+        return {
+          ...validator,
+          delegationAmount,
+          rewardAmount,
+          smallName: validator.name ? validator.name.toLowerCase() : '',
+        }
+      })
+
+      if (this.sort.property !== 'random') {
+        return orderBy(enrichedValidators, this.sort.property, this.sort.order)
+      }
+
+      const validators = orderBy(enrichedValidators, 'votingPower', 'asc')
+      const twoThirdIndex = Math.round(validators.length * 0.66)
+      return shuffle(validators.slice(0, twoThirdIndex)).concat(
+        shuffle(validators.slice(twoThirdIndex))
       )
     },
     properties() {
