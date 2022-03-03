@@ -79,15 +79,15 @@ export default {
         }
       })
 
-      if (this.sort.property !== 'random') {
-        return orderBy(enrichedValidators, this.sort.property, this.sort.order)
+      if (this.sort.property === 'random') {
+        const validators = orderBy(enrichedValidators, 'votingPower', 'asc')
+        const twoThirdIndex = Math.round(validators.length * 0.66)
+        return shuffle(validators.slice(0, twoThirdIndex)).concat(
+          shuffle(validators.slice(twoThirdIndex))
+        )
       }
 
-      const validators = orderBy(enrichedValidators, 'votingPower', 'asc')
-      const twoThirdIndex = Math.round(validators.length * 0.66)
-      return shuffle(validators.slice(0, twoThirdIndex)).concat(
-        shuffle(validators.slice(twoThirdIndex))
-      )
+      return orderBy(enrichedValidators, this.sort.property, this.sort.order)
     },
     properties() {
       return [
