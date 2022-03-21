@@ -110,7 +110,9 @@
         class="form-msg sm form-msg--error submission-error"
       >
         <div slot="title">{{ submissionErrorPrefix }}</div>
-        <div slot="subtitle">{{ submissionError }}</div>
+        <div slot="subtitle">
+          {{ errorMessage }}
+        </div>
       </CommonCard>
       <div class="action-modal-footer">
         <slot name="action-modal-footer">
@@ -261,7 +263,11 @@ export default {
       return fees.getFees(this.transactionData.type)
     },
     requiresSignIn() {
-      return !this.session || this.session.sessionType === SESSION_TYPES.EXPLORE
+      return (
+        !this.session ||
+        this.session.sessionType === SESSION_TYPES.EXPLORE ||
+        this.isTokenExpired
+      )
     },
     steps() {
       if (!this.session) return []
@@ -279,6 +285,18 @@ export default {
         return this.validate()
       }
       return true
+    },
+    isTokenExpired() {
+      return (
+        this.session.sessionType === SESSION_TYPES.AUTHCORE &&
+        this.submissionError &&
+        this.submissionError.includes('401')
+      )
+    },
+    errorMessage() {
+      return this.isTokenExpired
+        ? `Your token has expired, please sign in again.`
+        : this.submissionError
     },
   },
   watch: {
