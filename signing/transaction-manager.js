@@ -4,6 +4,7 @@ import {
   AminoTypes,
   defaultRegistryTypes,
   createBankAminoConverters,
+  createDistributionAminoConverters,
   createGovAminoConverters,
   createStakingAminoConverters,
 } from '@cosmjs/stargate'
@@ -26,6 +27,7 @@ import { signWithExtension } from '~/common/extension-utils'
 
 const aminoTypes = new AminoTypes({
   ...createBankAminoConverters(network.addressPrefix),
+  ...createDistributionAminoConverters(network.addressPrefix),
   ...createGovAminoConverters(network.addressPrefix),
   ...createStakingAminoConverters(network.addressPrefix),
 })
