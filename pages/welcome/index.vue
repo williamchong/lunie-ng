@@ -9,6 +9,11 @@
         route="/keplr"
       />
       <AddressLiSession
+        icon="public"
+        title="Cosmostation Browser Extension"
+        route="/cosmostation"
+      />
+      <AddressLiSession
         v-if="network.authcoreURL"
         icon="https"
         title="Authcore"
