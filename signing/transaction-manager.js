@@ -66,7 +66,7 @@ export async function createSignBroadcast({
   chainId,
   memo,
   ledgerTransport,
-  authcoreCosmosProvider,
+  sessionSigner,
   gasEstimateMultiplier,
 }) {
   const feeData = getFees(messageType, feeDenom, gasEstimateMultiplier)
@@ -97,7 +97,7 @@ export async function createSignBroadcast({
       },
       chainId,
       ledgerTransport,
-      authcoreCosmosProvider
+      sessionSigner
     )
 
     const messages = messageCreators[messageType](
