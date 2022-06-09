@@ -1,6 +1,6 @@
 export default {
   id: 'likecoin-mainnet-2',
-  name: 'LikeCoin chain',
+  name: 'LikeCoin',
   description:
     'LikeCoin is a decentralized publishing infrastructure. It provides a comprehensive metadata framework to facilitate content registration, licensing, and monetization for all media types.',
   logo: `logo.svg`,
