@@ -184,6 +184,7 @@ const SESSION_TYPES = {
   KEPLR: `keplr`,
   EXPLORE: `explore`,
   AUTHCORE: `authcore`,
+  COSMOSTATION: `cosmostation`,
 }
 
 export default {
@@ -462,11 +463,13 @@ export default {
           'data/getAccountInfo',
           this.session.address
         )
-        const authcoreCosmosProvider =
-          this.session.sessionType === SESSION_TYPES.AUTHCORE
-            ? await this.$store.dispatch('authcore/getSigner')
+        const sessionSigner =
+          this.session.sessionType === SESSION_TYPES.AUTHCORE ||
+          this.session.sessionType === SESSION_TYPES.COSMOSTATION
+            ? await this.$store.dispatch(
+                `${this.session.sessionType}/getSigner`
+              )
             : null
-
         const hashResult = await createSignBroadcast({
           messageType: type,
           message,
@@ -480,7 +483,7 @@ export default {
           feeDenom: this.feeDenom,
           chainId: block.chainId,
           ledgerTransport: this.transport,
-          authcoreCosmosProvider,
+          sessionSigner,
           gasEstimateMultiplier,
         })
 
