@@ -72,7 +72,7 @@ h4 {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--link-hover);
+  color: var(--app-nav);
   font-size: var(--text-base);
   border: 2px solid var(--app-nav);
 }
