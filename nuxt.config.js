@@ -24,6 +24,7 @@ export default {
         content:
           'Lunie 3 is a simple staking and governance interface for proof-of-stake blockchains',
       },
+      { hid: 'theme-color', name: 'theme-color', content: '#28646E' },
     ],
     link: [
       {

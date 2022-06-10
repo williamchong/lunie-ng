@@ -50,7 +50,7 @@ export default {
   display: flex;
   align-items: center;
   font-size: var(--text-xs);
-  color: var(--gray-500);
+  color: var(--app-nav-text-hover);
   justify-content: space-between;
   padding: 0.5rem 0.75rem;
   margin: 1rem;
