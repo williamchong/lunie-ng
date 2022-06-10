@@ -72,10 +72,6 @@ export default {
   padding-top: 3rem;
 }
 
-.app-menu-item:hover {
-  background: var(--app-nav-hover);
-}
-
 .app-menu .app-menu-item {
   display: flex;
   justify-content: space-between;
@@ -84,9 +80,14 @@ export default {
   margin: 0.5rem 1rem;
   font-weight: 400;
   font-size: 14px;
-  color: var(--gray-500);
+  color: var(--app-nav-text);
+  border: 2px solid transparent;
   border-radius: var(--border-radius);
   transition: all 0.5s ease;
+}
+
+.app-menu .app-menu-item:hover {
+  border-color: var(--app-nav-hover);
 }
 
 .app-menu .app-menu-item--link:hover {
@@ -95,8 +96,8 @@ export default {
 
 .app-menu .app-menu-item.nuxt-link-active {
   background: var(--app-nav-hover);
-  box-shadow: 0 0 1px 0 var(--gray-700);
-  color: var(--gray-100);
+  box-shadow: 0 0 1px 0 var(--app-nav-shadow);
+  color: var(--app-nav-text-hover);
 }
 
 @media screen and (max-width: 1023px) {

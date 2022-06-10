@@ -51,13 +51,17 @@ export default {
   width: 100%;
   padding: 0.5rem 0.75rem;
   border-radius: var(--border-radius);
-  background: var(--app-nav-hover);
-  box-shadow: 0 0 1px 0 var(--gray-700);
+  background: linear-gradient(
+    to right,
+    var(--app-user-menu-color1),
+    var(--app-user-menu-color2)
+  );
+  box-shadow: 0 0 1px 0 var(--app-nav-shadow);
 }
 
 h4 {
   font-size: var(--text-xs);
-  color: var(--gray-500);
+  color: var(--app-nav-text-hover);
 }
 
 .container .button.secondary {
@@ -72,9 +76,9 @@ h4 {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--link-hover);
+  color: var(--app-nav);
   font-size: var(--text-base);
-  border: 2px solid var(--gray-800);
+  border: 2px solid var(--app-nav);
 }
 
 .icon-button:hover {

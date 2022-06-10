@@ -3,12 +3,14 @@
     <template v-if="block">
       <div class="connected">
         <span class="status" />
-        <span>{{ block.chainId }}</span>
+        <div>
+          <div>{{ block.chainId }}</div>
+          <div v-if="block.height">
+            {{ block.height | prettyInt }}
+          </div>
+          <div v-else>--</div>
+        </div>
       </div>
-      <span v-if="block.height">
-        {{ block.height | prettyInt }}
-      </span>
-      <span v-else>--</span>
     </template>
 
     <template v-else>
@@ -50,12 +52,12 @@ export default {
   display: flex;
   align-items: center;
   font-size: var(--text-xs);
-  color: var(--gray-500);
+  color: var(--app-nav-text);
   justify-content: space-between;
   padding: 0.5rem 0.75rem;
   margin: 1rem;
   border-radius: var(--border-radius);
-  background: var(--app-nav-hover);
+  border: 2px solid var(--app-nav-hover);
   box-shadow: 0 0 1px 0 var(--gray-700);
 }
 
@@ -91,7 +93,7 @@ export default {
   }
   70% {
     transform: scale(0.9);
-    box-shadow: 0 0 0 5px hsla(120, 61%, 45%, 0.15);
+    box-shadow: 0 0 0 5px hsla(120, 87%, 51%, 0.15);
   }
   100% {
     box-shadow: 0 0 0 0 hsla(120, 61%, 45%, 0.15);
