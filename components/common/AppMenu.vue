@@ -72,10 +72,6 @@ export default {
   padding-top: 3rem;
 }
 
-.app-menu-item:hover {
-  background: var(--app-nav-hover);
-}
-
 .app-menu .app-menu-item {
   display: flex;
   justify-content: space-between;
@@ -85,8 +81,13 @@ export default {
   font-weight: 400;
   font-size: 14px;
   color: var(--app-nav-text);
+  border: 2px solid transparent;
   border-radius: var(--border-radius);
   transition: all 0.5s ease;
+}
+
+.app-menu .app-menu-item:hover {
+  border-color: var(--app-nav-hover);
 }
 
 .app-menu .app-menu-item--link:hover {
