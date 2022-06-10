@@ -51,7 +51,11 @@ export default {
   width: 100%;
   padding: 0.5rem 0.75rem;
   border-radius: var(--border-radius);
-  background: var(--app-nav-hover);
+  background: linear-gradient(
+    to right,
+    var(--app-user-menu-color1),
+    var(--app-user-menu-color2)
+  );
   box-shadow: 0 0 1px 0 var(--app-nav-shadow);
 }
 

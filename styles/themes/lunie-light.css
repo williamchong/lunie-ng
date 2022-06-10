@@ -21,6 +21,8 @@
   --app-nav-shadow: #50E3C2;
   --app-nav-text: var(--gray-200);
   --app-nav-text-hover: var(--gray-800);
+  --app-user-menu-color1: #D2F0F0;
+  --app-user-menu-color2: #F0E6B4;
 
   /* typography */
   --bright: var(--gray-900);
