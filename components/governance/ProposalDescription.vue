@@ -58,7 +58,7 @@ h4 {
 pre {
   font-family: 'Menlo', 'Consolas', monospace;
   border-radius: 0.25rem;
-  background: var(--app-nav-hover);
+  background: var(--app-fg);
   color: var(--gray-500);
   font-size: 14px;
   padding: 1rem;
