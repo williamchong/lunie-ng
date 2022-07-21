@@ -26,7 +26,7 @@
     "@cosmjs/stargate": "^0.28.3",
     "@ledgerhq/hw-transport-webhid": "^5.30.0",
     "@ledgerhq/hw-transport-webusb": "^5.30.0",
-    "@likecoin/authcore-js": "^1.1.0-widi",
+    "@likecoin/authcore-js": "0.3.0-like.0",
     "@likecoin/secretd-js": "^0.4.3",
     "@nuxtjs/axios": "^5.12.2",
     "bech32": "^1.1.4",
