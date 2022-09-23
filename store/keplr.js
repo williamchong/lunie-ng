@@ -63,15 +63,15 @@ export const actions = {
           currencies: network.coinLookup.map(({ viewDenom }) =>
             lunieCoinToKeplrCoin(viewDenom)
           ),
-          feeCurrencies: network.coinLookup.map(({ viewDenom }) =>
-            lunieCoinToKeplrCoin(viewDenom)
-          ),
+          feeCurrencies: network.coinLookup.map(({ viewDenom }) => ({
+            ...lunieCoinToKeplrCoin(viewDenom),
+            gasPriceStep: {
+              low: 1,
+              average: 10,
+              high: 1000,
+            },
+          })),
           coinType: 118,
-          gasPriceStep: {
-            low: 1,
-            average: 10,
-            high: 1000,
-          },
           features: ['stargate', 'ibc-transfer', 'no-legacy-stdTx', 'ibc-go'],
         })
         await window.keplr.enable(block.chainId)
