@@ -1,5 +1,5 @@
 <template>
-  <div class="tx-container">
+  <div v-if="transactionCaption" class="tx-container">
     <a
       class="transaction"
       :href="network.apiURL + '/cosmos/tx/v1beta1/txs/' + transaction.hash"
@@ -47,6 +47,9 @@
               <p>
                 {{ iscnId }}
               </p>
+            </template>
+            <template v-if="nftClassId">
+              <p>{{ nftClassId }}</p>
             </template>
           </div>
           <div v-if="includesValidatorAddresses" class="validator-images">
@@ -122,8 +125,14 @@ export default {
             )
           ) {
             return 'Receive'
-          } else {
+          } else if (
+            allowedAddress.some((item) =>
+              this.transaction.details.from.includes(item)
+            )
+          ) {
             return 'Send'
+          } else {
+            return ''
           }
         case lunieMessageTypes.SEND_MULTIPLE:
           if (
@@ -153,6 +162,20 @@ export default {
           return `Update ISCN Record`
         case lunieMessageTypes.CHANGE_ISCN_OWNERSHIP:
           return `Change ISCN Ownership`
+        case lunieMessageTypes.CREATE_NFT_CLASS:
+          return `Create NFT Class`
+        case lunieMessageTypes.MINT_NFT:
+          return `Mint NFT`
+        case lunieMessageTypes.GRANT:
+          return `Grant`
+        case lunieMessageTypes.TRANSFER_NFT:
+          if (allowedAddress.includes(this.transaction.details.to)) {
+            return `Receive NFT`
+          } else if (allowedAddress.includes(this.transaction.details.from)) {
+            return `Transfer NFT`
+          } else {
+            return ``
+          }
         case lunieMessageTypes.UNKNOWN:
           return this.transaction.rawMessage.message['@type'].split('/')[1]
         /* istanbul ignore next */
@@ -169,7 +192,7 @@ export default {
         for (let i = 0; i < this.transaction.events.length; i++) {
           if (this.transaction.events[i]) {
             for (let j = 0; j < this.transaction.events[i].length; j++) {
-              const iscnEvent = this.transaction.events[i][j].attributes.find((a)=> a.key === 'iscn_id') // eslint-disable-line prettier/prettier
+              const iscnEvent = this.transaction.events[i][j].attributes.find((a) => a.key === 'iscn_id') // eslint-disable-line prettier/prettier
               if (iscnEvent) return iscnEvent.value
             }
           }
@@ -236,7 +259,7 @@ export default {
       } else if (
         this.transaction.type === lunieMessageTypes.SEND_MULTIPLE &&
         allowedAddress.includes(this.transaction.details.from[0])
-    // eslint-disable-line prettier/prettier
+        // eslint-disable-line prettier/prettier
       ) {
         let totalAmount = new BigNumber(0)
         this.transaction.details.amounts.forEach((a) => {
@@ -260,6 +283,17 @@ export default {
         return [receivedLIKE]
       }
       return null
+    },
+    nftClassId() {
+      if (
+        this.transaction.type === lunieMessageTypes.CREATE_NFT_CLASS ||
+        this.transaction.type === lunieMessageTypes.MINT_NFT ||
+        this.transaction.type === lunieMessageTypes.TRANSFER_NFT
+      ) {
+        return this.transaction.details.nftClassId
+      } else {
+        return ''
+      }
     },
   },
 }
