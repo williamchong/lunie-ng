@@ -39,7 +39,6 @@ export default {
         href: `https://fonts.googleapis.com/icon?family=Material+Icons`,
         as: 'style',
       },
-      { rel: 'preload', href: `${network.apiURL}/blocks/1`, as: 'fetch' },
       { rel: 'preconnect', href: 'https://keybase.io' },
       {
         rel: 'stylesheet',
